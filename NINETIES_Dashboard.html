@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NINETIES — Engagement Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0d14;--sf:#141420;--sf2:#1c1c2c;--bd:#252535;--tx:#e2e2f0;--mu:#5a5a7a;--ac:#a78bfa;--ac2:#34d399;--gold:#fbbf24;--err:#f87171}
+body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;line-height:1.6}
+a{color:var(--ac)}
+/* HEADER */
+.header{padding:1.5rem 2rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-dot{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#a78bfa,#34d399);display:flex;align-items:center;justify-content:center;font-size:14px}
+.brand-name{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--mu);letter-spacing:.15em;text-transform:uppercase}
+.brand-title{font-size:18px;font-weight:600;color:var(--tx)}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx);font-size:12px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;transition:all .15s;display:flex;align-items:center;gap:5px}
+.btn:hover{background:var(--sf2);border-color:var(--ac)}
+.btn.primary{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.primary:hover{background:#9171e8}
+.btn.success{background:var(--ac2);color:#000;border-color:var(--ac2)}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--bd);padding:0 2rem}
+.tab{padding:10px 16px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:var(--mu);transition:all .15s}
+.tab.active{color:var(--ac);border-bottom-color:var(--ac)}
+.tab:hover:not(.active){color:var(--tx)}
+/* PAGES */
+.page{display:none;padding:1.5rem 2rem}
+.page.active{display:block}
+/* METRIC CARDS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.mcard{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:14px}
+.mcard-label{font-size:10px;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.mcard-val{font-size:22px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+.mcard-sub{font-size:11px;color:var(--mu);margin-top:3px}
+.mcard.v1 .mcard-val{color:var(--ac)}
+.mcard.v2 .mcard-val{color:var(--ac2)}
+.mcard.v3 .mcard-val{color:var(--gold)}
+/* SECTION TITLE */
+.stitle{font-size:10px;font-weight:500;color:var(--mu);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;margin-top:1.5rem}
+/* CHART PANEL */
+.panel{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem}
+.ptitle{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between}
+.ptitle-left{display:flex;align-items:center;gap:6px}
+.cwrap{position:relative;width:100%}
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+/* FILTER PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--mu);transition:all .15s;font-family:'IBM Plex Sans Thai',sans-serif}
+.pill:hover{color:var(--tx);border-color:var(--tx)}
+/* RANK TABLE */
+.rtable{width:100%;border-collapse:collapse}
+.rtable th{font-size:10px;color:var(--mu);letter-spacing:.08em;text-align:left;padding:7px 8px;border-bottom:1px solid var(--bd)}
+.rtable td{padding:9px 8px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle}
+.rtable tr:last-child td{border-bottom:none}
+.rtable tr:hover td{background:var(--sf2)}
+.rbadge{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.rb1{background:#fbbf2418;color:#fbbf24;border:1px solid #fbbf2450}
+.rb2{background:#94a3b818;color:#94a3b8;border:1px solid #94a3b850}
+.rb3{background:#f97316 18;color:#f97316;border:1px solid #f9731650}
+.rbn{background:var(--sf2);color:var(--mu);border:1px solid var(--bd)}
+.mn{font-weight:500}.mh{font-size:11px;color:var(--mu)}
+.tier{font-size:10px;padding:2px 7px;border-radius:4px;font-family:'IBM Plex Mono',monospace;background:#a78bfa15;color:var(--ac);border:1px solid #a78bfa30;white-space:nowrap}
+.barbg{background:var(--sf2);border-radius:3px;height:5px;overflow:hidden;margin-top:4px;min-width:80px}
+.barfill{height:100%;border-radius:3px;transition:width .4s}
+.numr{font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right}
+/* DATA ENTRY TABLE */
+.detable{width:100%;border-collapse:collapse;font-size:13px}
+.detable th{font-size:10px;color:var(--mu);letter-spacing:.08em;padding:8px;border-bottom:1px solid var(--bd);text-align:left;font-weight:500}
+.detable td{padding:4px 6px;border-bottom:1px solid var(--bd)}
+.detable tr:last-child td{border-bottom:none}
+.detable tr:hover td{background:var(--sf2)}
+.member-cell{display:flex;align-items:center;gap:8px;padding:4px 0}
+.mdot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.deinput{background:var(--sf2);border:1px solid var(--bd);border-radius:5px;padding:5px 8px;color:var(--tx);font-size:12px;font-family:'IBM Plex Mono',monospace;width:100%;min-width:80px;transition:border-color .15s;text-align:right}
+.deinput:focus{outline:none;border-color:var(--ac)}
+.deinput:hover{border-color:#3a3a5a}
+.month-header{background:var(--sf);position:sticky;top:0;z-index:2}
+.month-group{text-align:center;font-size:11px;color:var(--ac);padding:6px 4px;border-bottom:1px solid var(--bd);font-weight:500}
+.de-scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:8px}
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.litem{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mu);cursor:pointer;transition:color .15s}
+.litem:hover{color:var(--tx)}
+.litem.hidden-leg{opacity:.35}
+.ldot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1e30;border:1px solid var(--ac);border-radius:8px;padding:10px 16px;font-size:13px;color:var(--tx);z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+/* Export info */
+.info-box{background:#a78bfa10;border:1px solid #a78bfa30;border-radius:8px;padding:12px 16px;font-size:12px;color:var(--mu);margin-bottom:1rem;line-height:1.8}
+.info-box code{font-family:'IBM Plex Mono',monospace;background:#a78bfa20;padding:1px 5px;border-radius:3px;font-size:11px;color:var(--ac)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="brand-dot">N</div>
+    <div>
+      <div class="brand-name">NINETIES DESIGN</div>
+      <div class="brand-title">Engagement Dashboard</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn primary" onclick="saveData(); showToast('บันทึกแล้ว ✓')">💾 บันทึก</button>
+    <button class="btn success" onclick="refreshAll(); showToast('รีเฟรชแล้ว ✓')">🔄 รีเฟรช</button>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview',this)">📊 Overview</div>
+  <div class="tab" onclick="switchTab('ranking',this)">🏆 Ranking</div>
+  <div class="tab" onclick="switchTab('input',this)">✏️ กรอกข้อมูล</div>
+</div>
+
+<!-- ===== PAGE: OVERVIEW ===== -->
+<div class="page active" id="page-overview">
+  <div class="metrics" id="metricCards"></div>
+  <p class="stitle" style="margin-top:0">Engagement Trend รายเดือน</p>
+  <div class="panel">
+    <div class="ptitle">
+      <div class="ptitle-left">📈 Engagement ทุกคนรายเดือน</div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="pills" id="filterPills"></div>
+    <div class="cwrap" style="height:300px"><canvas id="trendChart" role="img" aria-label="กราฟ Engagement รายเดือน"></canvas></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: RANKING ===== -->
+<div class="page" id="page-ranking">
+  <div class="stitle" style="margin-top:0">จัดอันดับ Engagement รวมทั้งหมด (สูง → ต่ำ)</div>
+  <div class="grid2">
+    <div class="panel" style="margin-bottom:0">
+      <div class="ptitle"><div class="ptitle-left">🏆 ตาราง Ranking</div></div>
+      <table class="rtable">
+        <thead><tr><th></th><th>น้อง</th><th>Tier</th><th>Engagement รวม</th></tr></thead>
+        <tbody id="rankBody"></tbody>
+      </table>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <div class="ptitle"><div class="ptitle-left">📊 Engagement รวม</div></div>
+      <div class="cwrap" style="height:280px"><canvas id="barChart" role="img" aria-label="แผนภูมิแท่ง Engagement รวม"></canvas></div>
+    </div>
+  </div>
+  <div class="stitle">Engagement รายเดือนแยกราย</div>
+  <div class="panel">
+    <div class="ptitle"><div class="ptitle-left">📅 เปรียบเทียบรายเดือน</div></div>
+    <div class="cwrap" style="height:280px"><canvas id="monthlyBar" role="img" aria-label="กราฟแท่ง Engagement รายเดือน"></canvas></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: INPUT ===== -->
+<div class="page" id="page-input">
+  <div class="info-box">
+    กรอก <strong>Engagement</strong> ของน้องแต่ละคนรายเดือน แล้วกด <code>💾 บันทึก</code> — ข้อมูลจะถูกเซฟไว้ในเบราว์เซอร์ กด <code>🔄 รีเฟรช</code> เพื่ออัพเดตกราฟ · กด <code>⬇ Export CSV</code> เพื่อดาวน์โหลด
+  </div>
+  <div class="de-scroll">
+    <table class="detable" id="dataTable">
+      <thead id="dataHead"></thead>
+      <tbody id="dataBody"></tbody>
+    </table>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:8px">
+    <button class="btn primary" onclick="saveData();showToast('บันทึกแล้ว ✓');refreshAll()">💾 บันทึก + รีเฟรช</button>
+    <button class="btn" onclick="if(confirm('ล้างข้อมูลทั้งหมด?')){clearAllData();showToast('ล้างข้อมูลแล้ว')}">🗑 ล้างข้อมูล</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ========== CONFIG ==========
+const MEMBERS = [
+  {name:'ยูริน',  handle:'@ynyuxin_',    tier:'TikTok Nano',   area:'กทม.',      color:'#a78bfa'},
+  {name:'เอมมี่', handle:'@emmyx_mi',    tier:'TikTok Micro',  area:'ปริมณฑล',   color:'#38bdf8'},
+  {name:'อินดี้', handle:'@cynthiana_q0',tier:'TikTok Micro',  area:'ปริมณฑล',   color:'#f472b6'},
+  {name:'เวียร์', handle:'@xaweirblurr', tier:'IG+TT Micro',   area:'ปริมณฑล',   color:'#34d399'},
+  {name:'เฟิร์ส', handle:'@1st_04',      tier:'TikTok Nano',   area:'กทม.',      color:'#fbbf24'},
+  {name:'พราว',   handle:'@prwjsuh',     tier:'IG Nano',       area:'เชียงใหม่',  color:'#fb923c'},
+  {name:'เนม',    handle:'@whynqme',     tier:'TikTok Micro',  area:'เชียงใหม่',  color:'#86efac'},
+];
+
+const MONTHS = ['ธ.ค. 68','ม.ค. 69','ก.พ. 69','มี.ค. 69','เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69','ต.ค. 69','พ.ย. 69','ธ.ค. 69'];
+
+// DEFAULT DATA (ข้อมูลเริ่มต้น — จะถูกแทนที่ด้วยข้อมูลที่บันทึกไว้)
+const DEFAULT_DATA = [
+  [237722,241228,169740,779718,0,0,0,0,0,0,0,0,0], // ยูริน
+  [0,0,0,0,268392,0,0,0,0,0,0,0,0],               // เอมมี่
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],                    // อินดี้
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],                    // เวียร์
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],                    // เฟิร์ส
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],                    // พราว
+  [0,0,0,0,0,0,0,0,0,0,0,0,0],                    // เนม
+];
+
+// ========== DATA LAYER ==========
+function loadData() {
+  const saved = localStorage.getItem('nineties_eng_data');
+  return saved ? JSON.parse(saved) : DEFAULT_DATA.map(r=>[...r]);
+}
+function saveData() {
+  const d = readInputData();
+  localStorage.setItem('nineties_eng_data', JSON.stringify(d));
+}
+function clearAllData() {
+  localStorage.removeItem('nineties_eng_data');
+  currentData = DEFAULT_DATA.map(r=>[...r]);
+  buildInputTable();
+  refreshAll();
+}
+function readInputData() {
+  return MEMBERS.map((m,mi) =>
+    MONTHS.map((_,moi) => {
+      const el = document.getElementById(`inp_${mi}_${moi}`);
+      return el ? (parseInt(el.value.replace(/,/g,'')) || 0) : (currentData[mi]||[])[moi]||0;
+    })
+  );
+}
+
+let currentData = loadData();
+
+// ========== COMPUTED ==========
+function compute(data) {
+  const totals = data.map(r => r.reduce((a,b)=>a+b,0));
+  const maxT = Math.max(...totals, 1);
+  const totalAll = totals.reduce((a,b)=>a+b,0);
+  const active = totals.filter(t=>t>0).length;
+  const monthSums = MONTHS.map((_,mi) => data.reduce((s,r)=>s+r[mi],0));
+  const bestMi = monthSums.indexOf(Math.max(...monthSums));
+  const topIdx = totals.indexOf(Math.max(...totals));
+  const ranked = MEMBERS.map((m,i)=>({...m, idx:i, total:totals[i]}))
+    .sort((a,b) => b.total - a.total || a.idx - b.idx);
+  return { totals, maxT, totalAll, active, monthSums, bestMi, topIdx, ranked };
+}
+
+// ========== CHARTS ==========
+let trendC, barC, monthlyC;
+let hiddenSeries = new Set();
+
+function fmtN(n) { return n.toLocaleString(); }
+
+function buildMetrics(c) {
+  const topMember = MEMBERS[c.topIdx];
+  const cards = [
+    {label:'Engagement รวมทั้งหมด', val: fmtN(c.totalAll), sub:'ทุกคนรวมกัน', cls:'v1'},
+    {label:'Creator ที่มีข้อมูล', val: c.active+'/'+MEMBERS.length, sub:'จากทั้งหมด '+MEMBERS.length+' คน', cls:''},
+    {label:'Top Creator', val: topMember.name, sub:'Engagement '+fmtN(c.totals[c.topIdx]), cls:'v2'},
+    {label:'เดือนที่ดีที่สุด', val: MONTHS[c.bestMi], sub:fmtN(c.monthSums[c.bestMi])+' Engagement', cls:'v3'},
+  ];
+  document.getElementById('metricCards').innerHTML = cards.map(c=>
+    `<div class="mcard ${c.cls}"><div class="mcard-label">${c.label}</div><div class="mcard-val">${c.val}</div><div class="mcard-sub">${c.sub}</div></div>`
+  ).join('');
+}
+
+function buildTrend(data) {
+  if(trendC) trendC.destroy();
+  const datasets = MEMBERS.map((m,i)=>({
+    label: m.name,
+    data: data[i],
+    borderColor: hiddenSeries.has(i) ? 'transparent' : m.color,
+    backgroundColor: hiddenSeries.has(i) ? 'transparent' : m.color+'22',
+    fill: false, tension:.35, pointRadius:4, pointHoverRadius:6, borderWidth:2,
+    hidden: hiddenSeries.has(i),
+  }));
+  trendC = new Chart(document.getElementById('trendChart').getContext('2d'), {
+    type:'line',
+    data:{ labels: MONTHS, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtN(ctx.parsed.y)}`}} },
+      scales:{
+        x:{ grid:{color:'#252535'}, ticks:{color:'#5a5a7a',font:{size:11},maxRotation:0,autoSkip:false} },
+        y:{ grid:{color:'#252535'}, ticks:{color:'#5a5a7a',font:{size:11},callback:v=>v>=1000?Math.round(v/1000)+'K':v} }
+      }
+    }
+  });
+}
+
+function buildBar(c) {
+  if(barC) barC.destroy();
+  barC = new Chart(document.getElementById('barChart').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: c.ranked.map(m=>m.name),
+      datasets:[{
+        label:'Engagement รวม',
+        data: c.ranked.map(m=>m.total),
+        backgroundColor: c.ranked.map(m=>m.color+'99'),
+        borderColor: c.ranked.map(m=>m.color),
+        borderWidth:1, borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${fmtN(ctx.parsed.x)}`}} },
+      scales:{
+        x:{ grid:{color:'#252535'}, ticks:{color:'#5a5a7a',font:{size:10},callback:v=>v>=1000?Math.round(v/1000)+'K':v} },
+        y:{ grid:{color:'transparent'}, ticks:{color:'#e2e2f0',font:{size:12}} }
+      }
+    }
+  });
+}
+
+function buildMonthlyBar(data) {
+  if(monthlyC) monthlyC.destroy();
+  monthlyC = new Chart(document.getElementById('monthlyBar').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: MONTHS,
+      datasets: MEMBERS.map((m,i)=>({
+        label: m.name,
+        data: data[i],
+        backgroundColor: m.color+'aa',
+        borderColor: m.color,
+        borderWidth:1,
+        borderRadius:2,
+      }))
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtN(ctx.parsed.y)}`}} },
+      scales:{
+        x:{ grid:{color:'#252535'}, ticks:{color:'#5a5a7a',font:{size:11},maxRotation:0,autoSkip:false}, stacked:true },
+        y:{ grid:{color:'#252535'}, ticks:{color:'#5a5a7a',font:{size:11},callback:v=>v>=1000?Math.round(v/1000)+'K':v}, stacked:true }
+      }
+    }
+  });
+}
+
+function buildRanking(c) {
+  const badgeCls = ['rb1','rb2','rb3','rbn','rbn','rbn','rbn'];
+  document.getElementById('rankBody').innerHTML = c.ranked.map((m,ri)=>{
+    const pct = (m.total/c.maxT*100).toFixed(1);
+    return `<tr>
+      <td><span class="rbadge ${badgeCls[ri]}">${ri+1}</span></td>
+      <td><div class="mn" style="color:${m.color}">${m.name}</div><div class="mh">${m.handle}</div></td>
+      <td><span class="tier">${m.tier}</span></td>
+      <td>
+        <div class="numr">${fmtN(m.total)}</div>
+        <div class="barbg"><div class="barfill" style="width:${pct}%;background:${m.color}"></div></div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function buildLegend() {
+  document.getElementById('legend').innerHTML = MEMBERS.map((m,i)=>
+    `<div class="litem ${hiddenSeries.has(i)?'hidden-leg':''}" onclick="toggleSeries(${i})" title="${m.handle}">
+      <div class="ldot" style="background:${m.color}"></div>${m.name}
+    </div>`
+  ).join('');
+  document.getElementById('filterPills').innerHTML = [
+    `<button class="pill" onclick="showAll()" style="border-color:#5a5a7a">ทุกคน</button>`,
+    ...MEMBERS.map((m,i)=>
+      `<button class="pill ${!hiddenSeries.has(i)?'':'hidden-leg'}" onclick="toggleSeries(${i})" style="border-color:${m.color}60;color:${m.color}">${m.name}</button>`)
+  ].join('');
+}
+
+function toggleSeries(i) {
+  if(hiddenSeries.has(i)) hiddenSeries.delete(i); else hiddenSeries.add(i);
+  buildLegend();
+  buildTrend(currentData);
+}
+function showAll() { hiddenSeries.clear(); buildLegend(); buildTrend(currentData); }
+
+// ========== INPUT TABLE ==========
+function buildInputTable() {
+  const data = loadData();
+  currentData = data;
+
+  // Header
+  let headHTML = `<tr class="month-header">
+    <th style="min-width:90px;position:sticky;left:0;background:var(--sf);z-index:3">น้อง</th>
+    ${MONTHS.map(m=>`<th class="month-group">${m}</th>`).join('')}
+    <th style="min-width:90px;text-align:right;color:var(--ac)">รวม</th>
+  </tr>`;
+  document.getElementById('dataHead').innerHTML = headHTML;
+
+  // Body
+  let bodyHTML = MEMBERS.map((m,mi)=>{
+    const rowTotal = data[mi].reduce((a,b)=>a+b,0);
+    return `<tr>
+      <td style="position:sticky;left:0;background:var(--sf);z-index:1">
+        <div class="member-cell">
+          <div class="mdot" style="background:${m.color}"></div>
+          <div><div style="font-weight:500">${m.name}</div><div style="font-size:10px;color:var(--mu)">${m.handle}</div></div>
+        </div>
+      </td>
+      ${MONTHS.map((_,moi)=>
+        `<td><input class="deinput" id="inp_${mi}_${moi}" type="text" value="${data[mi][moi]||0}" oninput="updateRowTotal(${mi})" onblur="formatInput(this)"></td>`
+      ).join('')}
+      <td style="text-align:right"><span id="row_total_${mi}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ac2)">${fmtN(rowTotal)}</span></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('dataBody').innerHTML = bodyHTML;
+}
+
+function updateRowTotal(mi) {
+  let total = 0;
+  MONTHS.forEach((_,moi)=>{
+    const el = document.getElementById(`inp_${mi}_${moi}`);
+    total += parseInt(el.value.replace(/,/g,''))||0;
+  });
+  const el = document.getElementById(`row_total_${mi}`);
+  if(el) el.textContent = fmtN(total);
+}
+function formatInput(el) {
+  const v = parseInt(el.value.replace(/,/g,''))||0;
+  el.value = v;
+}
+
+// ========== REFRESH ALL ==========
+function refreshAll() {
+  currentData = loadData();
+  buildInputTable();
+  const c = compute(currentData);
+  buildMetrics(c);
+  buildTrend(currentData);
+  buildLegend();
+  buildRanking(c);
+  buildBar(c);
+  buildMonthlyBar(currentData);
+}
+
+// ========== TABS ==========
+function switchTab(name, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+// ========== EXPORT CSV ==========
+function exportCSV() {
+  const data = loadData();
+  let csv = 'น้อง,Handle,' + MONTHS.join(',') + ',รวม\n';
+  MEMBERS.forEach((m,i)=>{
+    const total = data[i].reduce((a,b)=>a+b,0);
+    csv += `${m.name},${m.handle},${data[i].join(',')},${total}\n`;
+  });
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'NINETIES_Engagement_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+// ========== TOAST ==========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ========== INIT ==========
+buildInputTable();
+refreshAll();
+</script>
+</body>
+</html>
