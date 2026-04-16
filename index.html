@@ -85,6 +85,27 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 .info code{font-family:'IBM Plex Mono',monospace;background:#a78bfa20;padding:1px 5px;border-radius:3px;font-size:11px;color:var(--ac)}
 .toast{position:fixed;bottom:24px;right:24px;background:#1e1e30;border:1px solid var(--ac);border-radius:8px;padding:10px 16px;font-size:13px;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
 .toast.show{transform:translateY(0);opacity:1}
+/* ── MONTHLY RANK CARDS ── */
+.mo-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.mo-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.mo-card.rank-1::before{background:var(--gold)}
+.mo-card.rank-2::before{background:#94a3b8}
+.mo-card.rank-3::before{background:#f97316}
+.mo-card.rank-n::before{background:var(--bd)}
+.mo-rank-num{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;min-width:28px;text-align:center}
+.mo-rank-1{color:var(--gold)}.mo-rank-2{color:#94a3b8}.mo-rank-3{color:#f97316}.mo-rank-n{color:var(--mu)}
+.mo-card-info{flex:1;min-width:0}
+.mo-card-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mo-card-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;margin-top:2px}
+.mo-card-sub{font-size:11px;color:var(--mu);margin-top:1px}
+.mo-card-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--sf2)}
+.mo-card-bar-fill{height:100%;border-radius:0 2px 2px 0;transition:width .5s}
+/* MoM comparison cards */
+.mom-card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:12px}
+.mom-name{font-size:12px;font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.mom-val{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600}
+.mom-delta{font-size:11px;margin-top:3px;display:flex;align-items:center;gap:4px}
+.delta-up{color:#34d399}.delta-dn{color:#f87171}.delta-eq{color:var(--mu)}
 </style>
 </head>
 <body>
@@ -105,6 +126,7 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
   <div class="tab active" onclick="switchTab('overview',this)">📊 Overview</div>
   <div class="tab" onclick="switchTab('ranking',this)">🏆 Ranking</div>
   <div class="tab" onclick="switchTab('compare',this)">📈 เปรียบเทียบ</div>
+  <div class="tab" onclick="switchTab('monthly',this)">🗓 รายเดือน</div>
   <div class="tab" onclick="switchTab('input',this)">✏️ กรอกข้อมูล</div>
 </div>
 
@@ -170,6 +192,53 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
   <p class="stitle">Views vs Engagement รวม — รายคน</p>
   <div class="panel">
     <div class="cwrap" style="height:290px"><canvas id="veC" role="img" aria-label="Views vs Engagement per member"></canvas></div>
+  </div>
+</div>
+
+<!-- ══ MONTHLY BREAKDOWN ══ -->
+<div class="page" id="page-monthly">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem">
+    <div>
+      <div class="stitle" style="margin:0 0 4px">ดูรายเดือน — ใครเยอะสุด</div>
+      <div style="font-size:12px;color:var(--mu)">เลือกเดือนที่ต้องการดู</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="tg" id="mo-nav">
+        <button class="tgb" onclick="prevMo()">◀</button>
+        <span id="mo-label" style="padding:4px 14px;font-size:12px;color:var(--tx);font-family:'IBM Plex Mono',monospace;min-width:80px;text-align:center"></span>
+        <button class="tgb" onclick="nextMo()">▶</button>
+      </div>
+      <div class="tg">
+        <button class="tgb on" id="mo-te" onclick="setMoM('eng')">Engagement</button>
+        <button class="tgb"    id="mo-tv" onclick="setMoM('views')">ยอดวิว</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- month selector pills -->
+  <div class="pills" id="moPills"></div>
+
+  <!-- metric cards for selected month -->
+  <div class="metrics" id="moCards"></div>
+
+  <!-- ranked cards for selected month -->
+  <div id="moRankCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:1.5rem"></div>
+
+  <div class="grid2">
+    <div class="panel" style="margin-bottom:0">
+      <div class="ptitle" id="mo-bar-title">📊 Engagement เดือนนี้ — จัดอันดับ</div>
+      <div class="cwrap" style="height:280px"><canvas id="moBarC" role="img" aria-label="Bar chart เดือนที่เลือก"></canvas></div>
+    </div>
+    <div class="panel" style="margin-bottom:0">
+      <div class="ptitle" id="mo-donut-title">🥧 สัดส่วน Engagement</div>
+      <div class="cwrap" style="height:280px"><canvas id="moDonutC" role="img" aria-label="Donut chart สัดส่วน"></canvas></div>
+    </div>
+  </div>
+
+  <!-- month-over-month comparison (this month vs last) -->
+  <div class="panel" style="margin-top:1.25rem">
+    <div class="ptitle" id="mo-mom-title">📅 เทียบกับเดือนก่อน</div>
+    <div id="moMoM" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div>
   </div>
 </div>
 
@@ -398,10 +467,181 @@ function switchTab(name,el){
   if(name==='compare')buildCmp();
 }
 
+// ══════════════════════════════════
+//  MONTHLY BREAKDOWN
+// ══════════════════════════════════
+let selMo = 0;   // selected month index (0 = ธ.ค.68)
+let moMetric = 'eng';
+
+function setMoM(m){
+  moMetric=m;
+  document.getElementById('mo-te').classList.toggle('on',m==='eng');
+  document.getElementById('mo-tv').classList.toggle('on',m==='views');
+  buildMonthly();
+}
+function prevMo(){ selMo=Math.max(0,selMo-1); buildMonthly(); }
+function nextMo(){ selMo=Math.min(MO-1,selMo+1); buildMonthly(); }
+
+function buildMoPills(){
+  document.getElementById('moPills').innerHTML = MO_LBL.map((mo,i)=>
+    `<button class="pill" onclick="selMo=${i};buildMonthly()" id="mop_${i}" style="${i===selMo?`border-color:var(--ac);color:var(--ac)`:''}">${mo}</button>`
+  ).join('');
+}
+
+function buildMonthly(){
+  const mx = moMetric==='eng' ? cd.eng : cd.views;
+  const moLabel = MO_LBL[selMo];
+  document.getElementById('mo-label').textContent = moLabel;
+
+  // Update pills highlight
+  MO_LBL.forEach((_,i)=>{
+    const p=document.getElementById(`mop_${i}`);
+    if(!p)return;
+    p.style.borderColor=i===selMo?'var(--ac)':'var(--bd)';
+    p.style.color=i===selMo?'var(--ac)':'var(--mu)';
+  });
+
+  // Data for this month
+  const vals = MB.map((m,i)=>({...m, i, val:mx[i][selMo]}));
+  const ranked = [...vals].sort((a,b)=>b.val-a.val);
+  const total = ranked.reduce((s,m)=>s+m.val,0);
+  const maxVal = Math.max(...vals.map(v=>v.val),1);
+
+  // metric label
+  const metLabel = moMetric==='eng'?'Engagement':'ยอดวิว';
+  document.getElementById('mo-bar-title').textContent   = `📊 ${metLabel} ${moLabel} — จัดอันดับ`;
+  document.getElementById('mo-donut-title').textContent = `🥧 สัดส่วน ${metLabel} ${moLabel}`;
+  document.getElementById('mo-mom-title').textContent   = `📅 เทียบกับเดือนก่อน (${selMo>0?MO_LBL[selMo-1]:'—'} → ${moLabel})`;
+
+  // Summary metric cards
+  const topMember = ranked[0];
+  const activeCount = ranked.filter(m=>m.val>0).length;
+  document.getElementById('moCards').innerHTML = [
+    {lb:`${metLabel} รวม${moLabel}`, v:fF(total), sub:`${activeCount} คนมีข้อมูล`, cl:'ce'},
+    {lb:'อันดับ 1 เดือนนี้', v:topMember.val>0?topMember.name:'—', sub:topMember.val>0?fF(topMember.val)+' '+metLabel:'ยังไม่มีข้อมูล', cl:'cv'},
+    {lb:'สัดส่วนสูงสุด', v:topMember.val>0&&total>0?((topMember.val/total*100).toFixed(1)+'%'):'—', sub:topMember.val>0?topMember.name:'', cl:'cg'},
+    {lb:'ค่าเฉลี่ยต่อคน', v:fN(Math.round(total/MB.length)), sub:`จาก ${MB.length} คน`, cl:'cg2'},
+  ].map(x=>`<div class="mc ${x.cl}"><div class="mc-lb">${x.lb}</div><div class="mc-v">${x.v}</div><div class="mc-sub">${x.sub}</div></div>`).join('');
+
+  // Rank cards
+  const rnkClass = ['rank-1','rank-2','rank-3','rank-n','rank-n','rank-n','rank-n'];
+  const rnkNumCls= ['mo-rank-1','mo-rank-2','mo-rank-3','mo-rank-n','mo-rank-n','mo-rank-n','mo-rank-n'];
+  const rnkEmoji = ['🥇','🥈','🥉','4','5','6','7'];
+  document.getElementById('moRankCards').innerHTML = ranked.map((m,ri)=>{
+    const pct = (m.val/maxVal*100).toFixed(1);
+    const pctOfTotal = total>0?(m.val/total*100).toFixed(1)+'%':'0%';
+    return `<div class="mo-card ${rnkClass[ri]}">
+      <div class="mo-rank-num ${rnkNumCls[ri]}">${rnkEmoji[ri]}</div>
+      <div class="mo-card-info">
+        <div class="mo-card-name" style="color:${m.color}">${m.name}</div>
+        <div class="mo-card-val" style="color:${m.color}">${fF(m.val)}</div>
+        <div class="mo-card-sub">${metLabel} · ${pctOfTotal} ของรวม</div>
+      </div>
+      <div class="mo-card-bar"><div class="mo-card-bar-fill" style="width:${pct}%;background:${m.color}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Bar chart
+  if(Ch.moBar)Ch.moBar.destroy();
+  Ch.moBar = new Chart(document.getElementById('moBarC').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels: ranked.map(m=>m.name),
+      datasets:[{
+        data: ranked.map(m=>m.val),
+        backgroundColor: ranked.map(m=>m.color+'99'),
+        borderColor: ranked.map(m=>m.color),
+        borderWidth:1, borderRadius:6,
+      }]
+    },
+    options:{indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${fF(c.parsed.x)}`}}},
+      scales:{
+        x:{grid:{color:'#252535'},ticks:{color:'#5a5a7a',font:{size:10},callback:v=>fN(v)}},
+        y:{grid:{color:'transparent'},ticks:{color:'#e2e2f0',font:{size:12}}}
+      }
+    }
+  });
+
+  // Donut chart
+  if(Ch.moDnt)Ch.moDnt.destroy();
+  const hasData = ranked.some(m=>m.val>0);
+  Ch.moDnt = new Chart(document.getElementById('moDonutC').getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels: ranked.map(m=>m.name),
+      datasets:[{
+        data: hasData ? ranked.map(m=>m.val) : MB.map(()=>1),
+        backgroundColor: hasData ? ranked.map(m=>m.color+'cc') : MB.map(()=>'#252535'),
+        borderColor: hasData ? ranked.map(m=>m.color) : MB.map(()=>'#1c1c2c'),
+        borderWidth: 2,
+        hoverOffset: 6,
+      }]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'right',labels:{color:'#5a5a7a',font:{size:11},boxWidth:10,padding:8}},
+        tooltip:{callbacks:{
+          label: c=>{
+            if(!hasData) return ` ยังไม่มีข้อมูล`;
+            const v=c.parsed;const pct=total>0?(v/total*100).toFixed(1):'0';
+            return ` ${c.label}: ${fF(v)} (${pct}%)`;
+          }
+        }}
+      },
+      cutout:'55%',
+    }
+  });
+
+  // Month-over-month cards
+  const prevMx = selMo>0 ? (moMetric==='eng'?cd.eng:cd.views) : null;
+  document.getElementById('moMoM').innerHTML = MB.map((m,i)=>{
+    const cur  = mx[i][selMo];
+    const prev = prevMx && selMo>0 ? prevMx[i][selMo-1] : null;
+    let deltaHTML='';
+    if(prev!==null){
+      const diff=cur-prev;
+      const pct = prev>0?((diff/prev)*100).toFixed(1):null;
+      const cls = diff>0?'delta-up':diff<0?'delta-dn':'delta-eq';
+      const arrow= diff>0?'↑':diff<0?'↓':'—';
+      deltaHTML=`<div class="mom-delta"><span class="${cls}">${arrow} ${fF(Math.abs(diff))}${pct!==null?' ('+pct+'%)':''}</span></div>`;
+    }else{
+      deltaHTML=`<div class="mom-delta"><span class="delta-eq">— ไม่มีเดือนก่อน</span></div>`;
+    }
+    return `<div class="mom-card">
+      <div class="mom-name"><div class="mdot" style="background:${m.color};width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>${m.name} <span class="tier ${m.tc}" style="font-size:9px">${m.tier}</span></div>
+      <div class="mom-val" style="color:${m.color}">${fF(cur)}</div>
+      ${deltaHTML}
+      ${prev!==null?`<div style="font-size:10px;color:var(--mu);margin-top:2px">เดือนก่อน: ${fF(prev)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 function saveData(){save();}
-buildTbl();refreshAll();
+
+function refreshAll(){
+  cd=load();buildTbl();
+  const c=cmp(cd);
+  buildMC(c);buildLeg();buildTrend();buildRkTbl(c);buildRkBar(c);buildCmp();
+  buildMoPills();buildMonthly();
+}
+
+function switchTab(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');el.classList.add('active');
+  if(name==='compare')buildCmp();
+  if(name==='monthly'){buildMoPills();buildMonthly();}
+}
+
+// ── INIT ──
+buildTbl();
+cd=load();
+const _c=cmp(cd);
+buildMC(_c);buildLeg();buildTrend();buildRkTbl(_c);buildRkBar(_c);buildCmp();
+buildMoPills();buildMonthly();
 </script>
 </body>
 </html>
