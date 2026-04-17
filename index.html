@@ -3,70 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NINETIES — Dashboard</title>
+<title>NINETIES — Creator Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#f4f6fa;--sf:#ffffff;--sf2:#f0f2f7;--bd:#e2e6ef;--tx:#1a1d2e;--mu:#8892a4;
-  --ac:#6c5ce7;--ac2:#00b894;--blue:#0984e3;--gold:#f39c12;--red:#e17055;--header-bg:#ffffff;
+  --ac:#6c5ce7;--ac2:#00b894;--blue:#0984e3;--gold:#f39c12;--red:#e17055;
 }
 body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-serif;font-size:14px;line-height:1.6}
-.header{padding:1rem 2rem;border-bottom:1px solid var(--bd);background:var(--header-bg);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:var(--sf);border-radius:16px;padding:2rem;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h2{font-size:18px;font-weight:700;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--mu);line-height:1.7;margin-bottom:1.25rem}
+.modal input,.modal select{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--tx);background:var(--sf2);margin-bottom:8px;outline:none}
+.modal input:focus,.modal select:focus{border-color:var(--ac)}
+.step{display:flex;gap:10px;margin-bottom:10px;padding:10px 12px;background:var(--sf2);border-radius:8px;border:1px solid var(--bd)}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-txt{font-size:12px;color:var(--tx);line-height:1.7}
+.step-txt a{color:var(--ac);font-weight:600}
+.step-txt code{background:#ede9fe;padding:1px 5px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ac)}
+.modal-actions{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
+
+/* HEADER */
+.header{padding:1rem 2rem;border-bottom:1px solid var(--bd);background:var(--sf);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .brand{display:flex;align-items:center;gap:12px}
-.bdot{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6c5ce7,#00b894);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 2px 8px #6c5ce730}
+.bdot{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6c5ce7,#00b894);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
 .bsub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--mu);letter-spacing:.12em;text-transform:uppercase}
-.btitle{font-size:17px;font-weight:700;color:var(--tx)}
+.btitle{font-size:17px;font-weight:700}
 .hact{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.btn{padding:7px 14px;border-radius:7px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:12px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.btn:hover{background:var(--sf2);border-color:#c0c8da}
-.btn.pr{background:var(--ac);color:#fff;border-color:var(--ac);box-shadow:0 2px 8px #6c5ce740}.btn.pr:hover{opacity:.9}
-.btn.sc{background:var(--ac2);color:#fff;border-color:var(--ac2);box-shadow:0 2px 8px #00b89440}.btn.sc:hover{opacity:.9}
+.btn{padding:7px 14px;border-radius:7px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:12px;cursor:pointer;font-family:'IBM Plex Sans Thai',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-weight:500}
+.btn:hover{background:var(--sf2)}.btn.pr{background:var(--ac);color:#fff;border-color:var(--ac)}.btn.sc{background:var(--ac2);color:#fff;border-color:var(--ac2)}
 .sync-status{font-size:11px;padding:5px 10px;border-radius:6px;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:5px;border:1px solid var(--bd);background:var(--sf)}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#94a3b8;flex-shrink:0;transition:background .3s}
 .sync-dot.ok{background:#00b894}.sync-dot.err{background:#e17055}.sync-dot.loading{background:#f39c12;animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.tabs{display:flex;border-bottom:2px solid var(--bd);padding:0 2rem;overflow-x:auto;background:var(--sf);gap:0}
-.tab{padding:11px 18px;font-size:13px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--mu);transition:all .15s;white-space:nowrap;font-weight:500}
+
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--bd);padding:0 2rem;overflow-x:auto;background:var(--sf);gap:0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;font-size:12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--mu);transition:all .15s;white-space:nowrap;font-weight:500}
 .tab.active{color:var(--ac);border-bottom-color:var(--ac);background:#f8f7ff}.tab:hover:not(.active){color:var(--tx);background:var(--sf2)}
+
+/* PAGES */
 .page{display:none;padding:1.5rem 2rem}.page.active{display:block}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem}
-.mc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.mc-lb{font-size:11px;color:var(--mu);letter-spacing:.04em;margin-bottom:6px;font-weight:500}
-.mc-v{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--tx)}
-.mc-sub{font-size:11px;color:var(--mu);margin-top:4px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.mc{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.mc-lb{font-size:11px;color:var(--mu);margin-bottom:5px;font-weight:500}
+.mc-v{font-size:22px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.mc-sub{font-size:11px;color:var(--mu);margin-top:3px}
 .mc.ce{border-top:3px solid var(--ac)}.mc.ce .mc-v{color:var(--ac)}
 .mc.cv{border-top:3px solid var(--blue)}.mc.cv .mc-v{color:var(--blue)}
 .mc.cg{border-top:3px solid var(--gold)}.mc.cg .mc-v{color:var(--gold)}
 .mc.cg2{border-top:3px solid var(--ac2)}.mc.cg2 .mc-v{color:var(--ac2)}
 .stitle{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;margin-top:1.5rem}
 .panel{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.ptitle{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.ptitle{font-size:14px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .ptleft{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .cwrap{position:relative;width:100%}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
-@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
 .tg{display:flex;gap:3px;background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:3px}
 .tgb{padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;border:none;background:transparent;color:var(--mu);font-family:'IBM Plex Sans Thai',sans-serif;transition:all .15s;font-weight:500}
-.tgb.on{background:var(--ac);color:#fff;box-shadow:0 1px 4px #6c5ce740}
+.tgb.on{background:var(--ac);color:#fff}
 .pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
 .pill{font-size:11px;padding:4px 11px;border-radius:20px;cursor:pointer;border:1px solid var(--bd);background:var(--sf);color:var(--mu);transition:all .15s;font-family:'IBM Plex Sans Thai',sans-serif;font-weight:500}
-.pill:hover{border-color:var(--ac);color:var(--ac)}
 .leg{display:flex;flex-wrap:wrap;gap:10px}
 .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mu);cursor:pointer;transition:all .15s;font-weight:500}
 .li:hover{color:var(--tx)}.li.off{opacity:.3}
 .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.rtable{width:100%;border-collapse:collapse}
-.rtable th{font-size:11px;color:var(--mu);letter-spacing:.04em;text-align:left;padding:8px 10px;border-bottom:2px solid var(--bd);font-weight:600;background:var(--sf2)}
-.rtable td{padding:10px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle}
-.rtable tr:last-child td{border-bottom:none}.rtable tr:hover td{background:#f8f7ff}
+
+/* TABLES */
+.rtable,.fol-table,.er-table{width:100%;border-collapse:collapse}
+.rtable th,.fol-table th,.er-table th{font-size:11px;color:var(--mu);text-align:left;padding:8px 10px;border-bottom:2px solid var(--bd);font-weight:600;background:var(--sf2)}
+.rtable td,.fol-table td,.er-table td{padding:9px 10px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle}
+.rtable tr:last-child td,.fol-table tr:last-child td,.er-table tr:last-child td{border-bottom:none}
+.rtable tr:hover td,.fol-table tr:hover td,.er-table tr:hover td{background:#f8f7ff}
 .rbadge{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace}
 .rb1{background:#fef3c7;color:#d97706;border:1.5px solid #fbbf24}
 .rb2{background:#f1f5f9;color:#64748b;border:1.5px solid #94a3b8}
 .rb3{background:#fff3ed;color:#ea580c;border:1.5px solid #f97316}
 .rbn{background:var(--sf2);color:var(--mu);border:1px solid var(--bd)}
-.mn{font-weight:600;color:var(--tx)}.mh{font-size:11px;color:var(--mu)}
-.tier{font-size:10px;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap}
+.mn{font-weight:600}.mh{font-size:11px;color:var(--mu)}
+.tier{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700;white-space:nowrap;font-family:'IBM Plex Mono',monospace}
 .t1{background:#d1fae5;color:#065f46;border:1px solid #6ee7b7}
 .t2{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
 .t3{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd}
@@ -74,9 +96,11 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 .bfill{height:100%;border-radius:3px;transition:width .4s}
 .numr{font-family:'IBM Plex Mono',monospace;font-size:13px;text-align:right;font-weight:600}
 .numr2{font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:right;color:var(--mu)}
-.tier-leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1rem;padding:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.tleg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--mu);font-weight:500}
-.de-wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.tier-leg{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:1rem;padding:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.tleg-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--tx);font-weight:500}
+
+/* INPUT TABLE */
+.de-wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:10px}
 .det{width:100%;border-collapse:collapse;font-size:12px}
 .det th{font-size:10px;color:var(--mu);padding:8px 6px;border-bottom:2px solid var(--bd);text-align:center;font-weight:600;white-space:nowrap;background:var(--sf2)}
 .det th.sl{position:sticky;left:0;z-index:3;text-align:left;background:var(--sf2)}
@@ -86,108 +110,105 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 .det tfoot td{background:var(--sf2);padding:8px 5px;font-weight:600}.det tfoot td.sl{background:var(--sf2)}
 .mcell{display:flex;align-items:center;gap:7px;padding:4px 2px;min-width:120px}
 .mdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:5px 7px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:72px;transition:border-color .15s;text-align:right}
-.inp:focus{outline:none;box-shadow:0 0 0 2px #6c5ce720}.inp:hover{border-color:#b0bcd4}
+.inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:5px 7px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:80px;transition:border-color .15s;text-align:right}
+.inp:focus{outline:none;box-shadow:0 0 0 2px #6c5ce720}
 .inp.iv{border-color:#93c5fd}.inp.iv:focus{border-color:var(--blue)}
 .inp.ie{border-color:#c4b5fd}.inp.ie:focus{border-color:var(--ac)}
+.inp.ig{border-color:#6ee7b7}.inp.ig:focus{border-color:var(--ac2)}
 .tc{font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:right;display:block;min-width:72px;font-weight:600}
 .tcv{color:var(--blue)}.tce{color:var(--ac)}
 .info{background:#f0eeff;border:1px solid #c4b5fd;border-radius:10px;padding:13px 16px;font-size:12px;color:#5b21b6;margin-bottom:1rem;line-height:1.9}
 .info code{font-family:'IBM Plex Mono',monospace;background:#ede9fe;padding:1px 6px;border-radius:3px;font-size:11px;color:var(--ac);font-weight:600}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--tx);border-radius:10px;padding:10px 16px;font-size:13px;color:#fff;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--tx);border-radius:10px;padding:10px 16px;font-size:13px;color:#fff;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s}
 .toast.show{transform:translateY(0);opacity:1}
+
+/* MONTHLY RANK CARDS */
 .mo-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .mo-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
 .mo-card.rank-1::before{background:#f39c12}.mo-card.rank-2::before{background:#94a3b8}.mo-card.rank-3::before{background:#f97316}.mo-card.rank-n::before{background:var(--bd)}
-.mo-rank-num{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;min-width:28px;text-align:center}
+.mo-rank-num{font-size:22px;font-weight:700;min-width:28px;text-align:center}
 .mo-rank-1{color:#d97706}.mo-rank-2{color:#64748b}.mo-rank-3{color:#ea580c}.mo-rank-n{color:var(--mu)}
 .mo-card-info{flex:1;min-width:0}
-.mo-card-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx)}
+.mo-card-name{font-weight:700;font-size:14px;color:var(--tx)}
 .mo-card-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;margin-top:2px}
-.mo-card-sub{font-size:11px;color:var(--mu);margin-top:1px}
+.mo-card-sub{font-size:11px;color:var(--mu)}
 .mo-card-bar{position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--sf2)}
 .mo-card-bar-fill{height:100%;transition:width .5s}
-.mom-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.mom-card{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px}
 .mom-name{font-size:12px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px;color:var(--tx)}
 .mom-val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--tx)}
 .mom-delta{font-size:11px;margin-top:4px;display:flex;align-items:center;gap:4px;font-weight:600}
 .delta-up{color:#059669}.delta-dn{color:#dc2626}.delta-eq{color:var(--mu)}
 
-/* SETUP MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal{background:var(--sf);border-radius:16px;padding:2rem;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.modal h2{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--tx)}
-.modal p{font-size:13px;color:var(--mu);line-height:1.7;margin-bottom:1.25rem}
-.modal input{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--tx);background:var(--sf2);margin-bottom:8px;outline:none}
-.modal input:focus{border-color:var(--ac);box-shadow:0 0 0 3px #6c5ce720}
-.modal-actions{display:flex;gap:8px;margin-top:1.25rem;flex-wrap:wrap}
-.step{display:flex;gap:10px;margin-bottom:12px;padding:12px;background:var(--sf2);border-radius:8px;border:1px solid var(--bd)}
-.step-num{width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step-txt{font-size:12px;color:var(--tx);line-height:1.7}
-.step-txt a{color:var(--ac);font-weight:600}
-.step-txt code{background:#ede9fe;padding:1px 5px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ac)}
-
-/* FOLLOWER RANKING */
-.fol-section{margin-bottom:1.5rem}
-.fol-table{width:100%;border-collapse:collapse}
-.fol-table th{font-size:10px;color:var(--mu);padding:8px 10px;border-bottom:2px solid var(--bd);text-align:left;font-weight:600;background:var(--sf2)}
-.fol-table th.nr{text-align:right}
-.fol-table td{padding:10px;border-bottom:1px solid var(--bd);font-size:13px;vertical-align:middle}
-.fol-table tr:last-child td{border-bottom:none}
-.fol-table tr:hover td{background:#f8f7ff}
-.fol-bar-wrap{display:flex;align-items:center;gap:8px}
-.fol-bar-bg{flex:1;background:var(--sf2);border-radius:3px;height:5px;overflow:hidden}
-.fol-bar-fill{height:100%;border-radius:3px}
-.fol-num{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;min-width:60px;text-align:right}
-.plat-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
-.plat-ig{background:#fce7f3;color:#9d174d;border:1px solid #f9a8d4}
-.plat-tt{background:#ffe4e6;color:#9f1239;border:1px solid #fda4af}
-.fol-inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:4px 7px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:80px;text-align:right}
-.fol-inp:focus{outline:none;border-color:var(--ac)}
-.rank-badge{width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace}
-
-/* RANGE / PROGRESS PAGE */
-.range-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:10px}
+/* RANGE / PROGRESS */
+.range-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:10px}
 .range-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.range-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
-.range-meta{font-size:11px;color:var(--mu)}
 .range-row{display:grid;grid-template-columns:90px 1fr 80px 80px;gap:8px;align-items:center;margin-bottom:8px}
 .range-label{font-size:11px;color:var(--mu);font-weight:500}
 .range-prog-bg{background:var(--sf2);border-radius:4px;height:10px;overflow:hidden;position:relative}
 .range-prog-fill{height:100%;border-radius:4px;transition:width .5s}
-.range-prog-mid{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(0,0,0,.15);transform:translateX(-50%)}
-.range-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;text-align:right}
+.range-prog-mid{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(108,92,231,.3);transform:translateX(-50%)}
+.range-pct{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;text-align:right}
 .range-remain{font-size:10px;color:var(--mu);text-align:right;font-family:'IBM Plex Mono',monospace}
 .pct-ok{color:#059669}.pct-warn{color:#d97706}.pct-danger{color:#dc2626}
 .range-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
-.rscard{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
-.rscard-label{font-size:10px;color:var(--mu);font-weight:600;letter-spacing:.04em;margin-bottom:4px}
+.rscard{background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:12px 14px}
+.rscard-label{font-size:10px;color:var(--mu);font-weight:600;margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
 .rscard-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700}
 .rscard-sub{font-size:10px;color:var(--mu);margin-top:2px}
-.half-line{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mu);margin-bottom:1rem;padding:8px 12px;background:#fff8e7;border:1px solid #fde68a;border-radius:7px}
-.target-inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:4px 8px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:90px;text-align:right}
+.month-sel-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
+.target-inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:4px 8px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:95px;text-align:right}
 .target-inp:focus{outline:none;border-color:var(--ac)}
-.month-sel-bar{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+.half-note{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#92400e;margin-bottom:1rem;padding:10px 12px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;line-height:1.6}
+
+/* GROWTH TARGETS */
+.tier-card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.tier-card-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.kpi-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.kpi-row:last-child{border-bottom:none}
+.kpi-label{color:var(--mu);font-weight:500}
+.kpi-val{font-family:'IBM Plex Mono',monospace;font-weight:700}
+.growth-note{font-size:11px;color:var(--mu);margin-top:8px;padding:8px 10px;background:var(--sf2);border-radius:6px;line-height:1.6}
+
+/* MONTHLY CHANNEL SHEET */
+.channel-table{width:100%;border-collapse:collapse;font-size:12px}
+.channel-table th{padding:7px 10px;border-bottom:2px solid var(--bd);font-size:10px;color:var(--mu);font-weight:600;text-align:left;background:var(--sf2);white-space:nowrap}
+.channel-table th.center{text-align:center}
+.channel-table td{padding:7px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.channel-table tr:last-child td{border-bottom:none}
+.channel-table tr:hover td{background:#f8f7ff}
+.er-good{color:#059669;font-weight:700}.er-ok{color:#d97706;font-weight:700}.er-bad{color:#dc2626;font-weight:700}
+.ch-inp{background:var(--sf);border:1.5px solid var(--bd);border-radius:5px;padding:4px 6px;color:var(--tx);font-size:11px;font-family:'IBM Plex Mono',monospace;width:85px;text-align:right}
+.ch-inp:focus{outline:none;border-color:var(--ac)}
+.plat-hdr{padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.plat-ig{background:#fce7f3;color:#9d174d}
+.plat-tt{background:#fef2f2;color:#9f1239}
+.growth-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-weight:700}
+.gt-up{background:#d1fae5;color:#065f46}.gt-down{background:#fee2e2;color:#991b1b}.gt-flat{background:var(--sf2);color:var(--mu)}
+
+/* STATUS BADGES */
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:700}
+.badge-ok{background:#d1fae5;color:#065f46}.badge-warn{background:#fef3c7;color:#92400e}.badge-bad{background:#fee2e2;color:#991b1b}.badge-na{background:var(--sf2);color:var(--mu)}
 </style>
 </head>
 <body>
 
 <!-- SETUP MODAL -->
-<div class="modal-bg" id="setupModal">
+<div class="modal-bg" id="setupModal" style="display:none">
   <div class="modal">
     <h2>🔗 ตั้งค่า Shared Storage</h2>
-    <p>เพื่อให้ทุกคนเห็นข้อมูลเดียวกัน ต้องใช้ <strong>JSONBin.io</strong> (ฟรี) เป็นที่เก็บข้อมูลกลาง ทำครั้งเดียวตลอดไป</p>
-    <div class="step"><div class="step-num">1</div><div class="step-txt">ไปที่ <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> แล้วสมัครฟรี</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-txt">ไปที่ <strong>API Keys</strong> → คัดลอก <code>$2a$10$...</code> (Master Key)</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-txt">กด <strong>"+ New Bin"</strong> → ใส่ <code>{}</code> แล้ว Save → คัดลอก Bin ID จาก URL</div></div>
+    <p>เพื่อให้ทุกคนเห็นข้อมูลเดียวกัน ต้องใช้ <strong>JSONBin.io</strong> (ฟรี) เป็นที่เก็บข้อมูลกลาง</p>
+    <div class="step"><div class="step-num">1</div><div class="step-txt">ไปที่ <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> → สมัครฟรี</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-txt">ไปที่ <strong>API Keys</strong> → คัดลอก Master Key (<code>$2a$10$...</code>)</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-txt">กด <strong>"+ New Bin"</strong> → ใส่ <code>{}</code> → Save → คัดลอก Bin ID จาก URL</div></div>
     <input type="text" id="apiKeyInput" placeholder="Master Key: $2a$10$xxxxx" />
     <input type="text" id="binIdInput" placeholder="Bin ID: 6xxxxxxxxxxxxxxxxxxxxxxx" />
     <div style="font-size:11px;color:var(--mu);padding:8px 12px;background:#fff8e7;border:1px solid #fde68a;border-radius:7px;margin-top:4px">
-      ⚠️ Key นี้จะเซฟในเบราว์เซอร์ของแต่ละคน — แชร์ทั้ง Key และ Bin ID ให้ทุกคนในทีม
+      ⚠️ แชร์ Key + Bin ID ให้ทุกคนในทีม — เซฟไว้ในเบราว์เซอร์ของแต่ละคน
     </div>
     <div class="modal-actions">
       <button class="btn pr" onclick="saveSetup()">✓ บันทึกและเริ่มใช้งาน</button>
-      <button class="btn" onclick="useLocalOnly()">ใช้แบบ Local เดิม (ไม่ sync)</button>
+      <button class="btn" onclick="useLocalOnly()">ใช้แบบ Local (ไม่ sync)</button>
     </div>
   </div>
 </div>
@@ -198,39 +219,34 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
     <div><div class="bsub">NINETIES DESIGN · Creator Analytics</div><div class="btitle">Engagement Dashboard</div></div>
   </div>
   <div class="hact">
-    <div class="sync-status" id="syncStatus">
-      <div class="sync-dot" id="syncDot"></div>
-      <span id="syncLabel">ไม่ได้เชื่อมต่อ</span>
-    </div>
-    <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
+    <div class="sync-status" id="syncStatus"><div class="sync-dot" id="syncDot"></div><span id="syncLabel">Local</span></div>
+    <button class="btn" onclick="exportCSV()">⬇ Export</button>
     <button class="btn pr" onclick="doSave()">💾 บันทึก</button>
     <button class="btn sc" onclick="doLoad()">🔄 รีเฟรช</button>
-    <button class="btn" onclick="openSettings()" title="ตั้งค่า Sync">⚙️</button>
+    <button class="btn" onclick="openSettings()">⚙️</button>
   </div>
 </div>
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('overview',this)">📊 Overview</div>
+  <div class="tab" onclick="switchTab('monthly_entry',this)">📝 กรอกยอดรายเดือน</div>
+  <div class="tab" onclick="switchTab('growth',this)">📈 เป้าการเติบโต</div>
   <div class="tab" onclick="switchTab('ranking',this)">🏆 Ranking</div>
   <div class="tab" onclick="switchTab('followers',this)">👥 Followers</div>
-  <div class="tab" onclick="switchTab('range',this)">🎯 Range รายเดือน</div>
-  <div class="tab" onclick="switchTab('compare',this)">📈 เปรียบเทียบ</div>
+  <div class="tab" onclick="switchTab('range',this)">🎯 Range ครึ่งเดือน</div>
+  <div class="tab" onclick="switchTab('compare',this)">📊 เปรียบเทียบ</div>
   <div class="tab" onclick="switchTab('monthly',this)">🗓 รายเดือน</div>
-  <div class="tab" onclick="switchTab('input',this)">✏️ กรอกข้อมูล</div>
+  <div class="tab" onclick="switchTab('input',this)">✏️ Eng/Views Input</div>
 </div>
 
 <!-- ══ OVERVIEW ══ -->
 <div class="page active" id="page-overview">
   <div class="metrics" id="mCards"></div>
-  <p class="stitle" style="margin-top:0">Trend รายเดือน</p>
   <div class="panel">
     <div class="ptitle">
       <div class="ptleft">
         <span>📈 Trend ทุกคน</span>
-        <div class="tg">
-          <button class="tgb on" id="ov-te" onclick="setOvM('eng')">Engagement</button>
-          <button class="tgb"    id="ov-tv" onclick="setOvM('views')">ยอดวิว</button>
-        </div>
+        <div class="tg"><button class="tgb on" id="ov-te" onclick="setOvM('eng')">Engagement</button><button class="tgb" id="ov-tv" onclick="setOvM('views')">ยอดวิว</button></div>
       </div>
       <div class="leg" id="leg"></div>
     </div>
@@ -239,27 +255,107 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
   </div>
 </div>
 
+<!-- ══ กรอกยอดรายเดือน ══ -->
+<div class="page" id="page-monthly_entry">
+  <div class="info">
+    <strong>📝 กรอกยอดรายเดือน</strong> — กรอกข้อมูลรายคนรายเดือน IG + TikTok · <code>💾 บันทึก</code> เพื่อ sync ให้ทุกคนเห็น
+  </div>
+
+  <!-- Month selector -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap">
+    <div class="tg">
+      <button class="tgb" onclick="prevEntryMo()">◀</button>
+      <span id="entry-mo-label" style="padding:4px 16px;font-size:12px;font-family:'IBM Plex Mono',monospace;min-width:90px;text-align:center"></span>
+      <button class="tgb" onclick="nextEntryMo()">▶</button>
+    </div>
+    <div class="pills" id="entryMoPills" style="margin-bottom:0"></div>
+    <button class="btn pr" onclick="saveEntry()" style="margin-left:auto">💾 บันทึก + Sync</button>
+  </div>
+
+  <!-- Entry table per member -->
+  <div id="entryCards"></div>
+</div>
+
+<!-- ══ เป้าการเติบโต ══ -->
+<div class="page" id="page-growth">
+  <div class="panel" style="background:#f0fdf4;border-color:#86efac">
+    <div style="font-size:13px;font-weight:600;color:#065f46;margin-bottom:8px">📌 วิธีคิดเป้าแบ่งตาม Tier — อ้างอิง Meta / TikTok Business / HypeAuditor 2025</div>
+    <div style="font-size:12px;color:#166534;line-height:1.8">
+      <strong>Tier 1 (50K+)</strong> — Nano ฐานเล็ก algorithm TikTok ดัน Nano มากกว่า → เป้าสูงกว่า เพราะโตเป็น % ได้เร็ว<br>
+      <strong>Tier 2 (100K+)</strong> — Micro อยู่ช่วง build loyal audience → เป้ากลาง<br>
+      <strong>Tier 3 (300K+)</strong> — Mid-tier ฐานใหญ่ % โตช้าลงตามธรรมชาติ แต่ตัวเลขจริงสูงกว่า<br>
+      เป้า ER% = ER ปัจจุบัน × 1.05/เดือน · ทบทวนทุก Q (3 เดือน)
+    </div>
+  </div>
+
+  <div class="stitle" style="margin-top:1.25rem">มาตรฐาน KPI แยก Tier</div>
+  <div class="grid3">
+    <div class="tier-card">
+      <div class="tier-card-title"><span class="tier t1">Tier 1</span> 50,000+ followers</div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">3–5%</span></div>
+      <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 15%</span></div>
+      <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 10%</span></div>
+      <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 5.0%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 6.0%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 2,000</span></div>
+      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">1.5–2.5%</span></div>
+      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · โตเร็วได้เพราะ base เล็ก</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-card-title"><span class="tier t2">Tier 2</span> 100,000+ followers</div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">2–3%</span></div>
+      <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 10%</span></div>
+      <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 7%</span></div>
+      <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 3.0%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 4.0%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 10,000</span></div>
+      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">1–1.5%</span></div>
+      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · ช่วง build loyal audience</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-card-title"><span class="tier t3">Tier 3</span> 300,000+ followers</div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">1–2%</span></div>
+      <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 7%</span></div>
+      <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 5%</span></div>
+      <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 1.5%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 2.5%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 50,000</span></div>
+      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">0.5–1%</span></div>
+      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · % น้อยลงแต่ตัวเลขจริงสูง</div>
+    </div>
+  </div>
+
+  <div class="stitle">เป้ารายบุคคล — คำนวณจาก Baseline มี.ค. 2569</div>
+  <div class="panel" style="overflow-x:auto">
+    <table class="rtable" id="memberTargetTbl">
+      <thead><tr>
+        <th>น้อง</th><th>Tier</th>
+        <th>IG Fol ปัจจุบัน</th><th>TT Fol ปัจจุบัน</th>
+        <th>TT Fol ควรเพิ่ม/เดือน</th><th>TT Fol ควรเพิ่ม ครึ่งเดือน</th>
+        <th>TT ER ปัจจุบัน</th><th>TT ER เป้า</th>
+        <th>IG ER ปัจจุบัน</th><th>IG ER เป้า</th>
+        <th>Views โต/เดือน</th><th>Eng โต/เดือน</th>
+      </tr></thead>
+      <tbody id="memberTargetBody"></tbody>
+    </table>
+  </div>
+</div>
+
 <!-- ══ RANKING ══ -->
 <div class="page" id="page-ranking">
   <div class="tier-leg">
-    <div class="tleg-item"><span class="tier t1">Tier 1</span> 50,000 followers</div>
-    <div class="tleg-item"><span class="tier t2">Tier 2</span> 100,000 followers</div>
-    <div class="tleg-item"><span class="tier t3">Tier 3</span> 300,000 followers</div>
+    <div class="tleg-item"><span class="tier t1">Tier 1</span> 50,000+ followers</div>
+    <div class="tleg-item"><span class="tier t2">Tier 2</span> 100,000+ followers</div>
+    <div class="tleg-item"><span class="tier t3">Tier 3</span> 300,000+ followers</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
-    <span class="stitle" style="margin:0">จัดอันดับ (สูง → ต่ำ)</span>
-    <div class="tg">
-      <button class="tgb on" id="rk-te" onclick="setRkM('eng')">Engagement</button>
-      <button class="tgb"    id="rk-tv" onclick="setRkM('views')">ยอดวิว</button>
-    </div>
+    <span class="stitle" style="margin:0">จัดอันดับ</span>
+    <div class="tg"><button class="tgb on" id="rk-te" onclick="setRkM('eng')">Engagement</button><button class="tgb" id="rk-tv" onclick="setRkM('views')">ยอดวิว</button></div>
   </div>
   <div class="grid2">
     <div class="panel" style="margin-bottom:0">
       <div class="ptitle" id="rk-title">🏆 Ranking — Engagement</div>
-      <table class="rtable">
-        <thead><tr><th></th><th>น้อง</th><th>Tier</th><th id="rk-ca">Engagement รวม</th><th id="rk-cb">ยอดวิว รวม</th></tr></thead>
-        <tbody id="rankBody"></tbody>
-      </table>
+      <table class="rtable"><thead><tr><th></th><th>น้อง</th><th>Tier</th><th id="rk-ca">Engagement รวม</th><th id="rk-cb">ยอดวิว รวม</th></tr></thead><tbody id="rankBody"></tbody></table>
     </div>
     <div class="panel" style="margin-bottom:0">
       <div class="ptitle" id="rk-bt">📊 Engagement รวม</div>
@@ -270,129 +366,81 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 
 <!-- ══ FOLLOWERS ══ -->
 <div class="page" id="page-followers">
-  <div class="info">
-    <strong>👥 Followers</strong> เรียงจากมากไปน้อย แยก TikTok / IG · กรอกยอดฟอล แล้วกด <code>💾 บันทึก</code> เพื่อ sync ให้ทุกคนเห็น · เรียงอัตโนมัติทุกครั้งที่อัพเดต
-  </div>
+  <div class="info"><strong>👥 Followers</strong> เรียงจากมากไปน้อย แยก TikTok / IG · กรอกยอด Followers ล่าสุด → กด <code>💾 บันทึก</code></div>
   <div class="grid2">
-    <!-- TikTok Ranking -->
     <div class="panel" style="margin-bottom:0">
-      <div class="ptitle">🎵 TikTok — เรียงตาม Followers</div>
+      <div class="ptitle">🎵 TikTok — จัดอันดับ</div>
       <table class="fol-table" id="ttFolTable"></table>
     </div>
-    <!-- IG Ranking -->
     <div class="panel" style="margin-bottom:0">
-      <div class="ptitle">📸 Instagram — เรียงตาม Followers</div>
+      <div class="ptitle">📸 Instagram — จัดอันดับ</div>
       <table class="fol-table" id="igFolTable"></table>
     </div>
   </div>
   <div class="panel" style="margin-top:1.25rem">
     <div class="ptitle">✏️ อัพเดตยอด Followers</div>
-    <div style="font-size:12px;color:var(--mu);margin-bottom:1rem">กรอกยอด followers ล่าสุดของแต่ละคน แล้วกด บันทึก + Sync</div>
     <table class="rtable" id="folInputTable"></table>
-    <div style="margin-top:12px;display:flex;gap:8px">
-      <button class="btn pr" onclick="saveFol()">💾 บันทึก Followers + Sync</button>
-    </div>
+    <div style="margin-top:12px"><button class="btn pr" onclick="saveFol()">💾 บันทึก Followers + Sync</button></div>
   </div>
 </div>
 
-<!-- ══ RANGE รายเดือน ══ -->
+<!-- ══ RANGE ══ -->
 <div class="page" id="page-range">
-  <div class="half-line">
-    📅 <strong>ครึ่งเดือน = วันที่ 15</strong> · ดูว่าแต่ละคนทำได้กี่% เทียบกับเป้ารายเดือน · Progress bar ครึ่งซ้าย = ครึ่งแรก, ครึ่งขวา = ครึ่งหลัง
+  <div class="half-note">
+    📅 <div><strong>ครึ่งเดือน = วันที่ 15</strong> — น้องแต่ละคนควรทำได้ ≥50% ของเป้ารายเดือน ณ วันที่ 15 · กำหนดเป้าของแต่ละคนตาม Tier ด้านล่าง</div>
   </div>
   <div class="month-sel-bar">
-    <span style="font-size:12px;font-weight:600;color:var(--tx)">เดือนที่ดู:</span>
-    <div class="tg" id="range-mo-nav">
+    <div class="tg">
       <button class="tgb" onclick="prevRangeMo()">◀</button>
-      <span id="range-mo-label" style="padding:4px 16px;font-size:12px;color:var(--tx);font-family:'IBM Plex Mono',monospace;min-width:90px;text-align:center"></span>
+      <span id="range-mo-label" style="padding:4px 16px;font-size:12px;font-family:'IBM Plex Mono',monospace;min-width:90px;text-align:center"></span>
       <button class="tgb" onclick="nextRangeMo()">▶</button>
     </div>
-    <div class="tg">
-      <button class="tgb on" id="rng-te" onclick="setRngM('eng')">Engagement</button>
-      <button class="tgb"    id="rng-tv" onclick="setRngM('views')">ยอดวิว</button>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
-      <span style="font-size:11px;color:var(--mu)">เป้ารายเดือน (คนละ):</span>
-      <input class="target-inp" id="rng-target-eng" type="text" value="300000" placeholder="Eng เป้า" onchange="buildRange()">
-      <span style="font-size:11px;color:var(--mu)">Eng |</span>
-      <input class="target-inp" id="rng-target-views" type="text" value="1000000" placeholder="Views เป้า" onchange="buildRange()">
-      <span style="font-size:11px;color:var(--mu)">Views</span>
-    </div>
+    <div class="tg"><button class="tgb on" id="rng-te" onclick="setRngM('eng')">Engagement</button><button class="tgb" id="rng-tv" onclick="setRngM('views')">ยอดวิว</button></div>
   </div>
-
   <div class="range-summary" id="rangeSummary"></div>
-
   <div class="panel">
-    <div class="ptitle">
-      <span id="rng-panel-title">🎯 Progress Engagement — รายคน</span>
-      <span style="font-size:11px;color:var(--mu)">| ครึ่งแรกของเดือนควรได้ ≥50% ของเป้า</span>
-    </div>
+    <div class="ptitle"><span id="rng-panel-title">🎯 Progress Engagement — รายคน</span><span style="font-size:11px;color:var(--mu)">เส้นกลาง bar = 50% ของเป้า (ครึ่งเดือน)</span></div>
     <div id="rangeCards"></div>
   </div>
 </div>
 
 <!-- ══ COMPARE ══ -->
 <div class="page" id="page-compare">
-  <p class="stitle" style="margin-top:0">ยอดวิว รายเดือน — ทุกคน (Stacked)</p>
+  <p class="stitle" style="margin-top:0">ยอดวิว รายเดือน (Stacked)</p>
   <div class="panel"><div class="cwrap" style="height:270px"><canvas id="vsC"></canvas></div></div>
-  <p class="stitle">Engagement รายเดือน — ทุกคน (Stacked)</p>
+  <p class="stitle">Engagement รายเดือน (Stacked)</p>
   <div class="panel"><div class="cwrap" style="height:270px"><canvas id="esC"></canvas></div></div>
-  <p class="stitle">Views vs Engagement รวม — รายคน</p>
+  <p class="stitle">Views vs Engagement รวม</p>
   <div class="panel"><div class="cwrap" style="height:290px"><canvas id="veC"></canvas></div></div>
 </div>
 
 <!-- ══ MONTHLY ══ -->
 <div class="page" id="page-monthly">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem">
-    <div>
-      <div class="stitle" style="margin:0 0 4px">ดูรายเดือน — ใครเยอะสุด</div>
-      <div style="font-size:12px;color:var(--mu)">เลือกเดือนที่ต้องการดู</div>
-    </div>
+    <div><div class="stitle" style="margin:0 0 4px">ดูรายเดือน</div><div style="font-size:12px;color:var(--mu)">เลือกเดือนที่ต้องการดู</div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <div class="tg" id="mo-nav">
-        <button class="tgb" onclick="prevMo()">◀</button>
-        <span id="mo-label" style="padding:4px 14px;font-size:12px;color:var(--tx);font-family:'IBM Plex Mono',monospace;min-width:80px;text-align:center"></span>
-        <button class="tgb" onclick="nextMo()">▶</button>
-      </div>
-      <div class="tg">
-        <button class="tgb on" id="mo-te" onclick="setMoM('eng')">Engagement</button>
-        <button class="tgb"    id="mo-tv" onclick="setMoM('views')">ยอดวิว</button>
-      </div>
+      <div class="tg"><button class="tgb" onclick="prevMo()">◀</button><span id="mo-label" style="padding:4px 14px;font-size:12px;font-family:'IBM Plex Mono',monospace;min-width:80px;text-align:center"></span><button class="tgb" onclick="nextMo()">▶</button></div>
+      <div class="tg"><button class="tgb on" id="mo-te" onclick="setMoM('eng')">Engagement</button><button class="tgb" id="mo-tv" onclick="setMoM('views')">ยอดวิว</button></div>
     </div>
   </div>
   <div class="pills" id="moPills"></div>
   <div class="metrics" id="moCards"></div>
   <div id="moRankCards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:1.5rem"></div>
   <div class="grid2">
-    <div class="panel" style="margin-bottom:0">
-      <div class="ptitle" id="mo-bar-title">📊 Engagement เดือนนี้ — จัดอันดับ</div>
-      <div class="cwrap" style="height:280px"><canvas id="moBarC"></canvas></div>
-    </div>
-    <div class="panel" style="margin-bottom:0">
-      <div class="ptitle" id="mo-donut-title">🥧 สัดส่วน Engagement</div>
-      <div class="cwrap" style="height:280px"><canvas id="moDonutC"></canvas></div>
-    </div>
+    <div class="panel" style="margin-bottom:0"><div class="ptitle" id="mo-bar-title">📊 Engagement เดือนนี้</div><div class="cwrap" style="height:280px"><canvas id="moBarC"></canvas></div></div>
+    <div class="panel" style="margin-bottom:0"><div class="ptitle" id="mo-donut-title">🥧 สัดส่วน</div><div class="cwrap" style="height:280px"><canvas id="moDonutC"></canvas></div></div>
   </div>
-  <div class="panel" style="margin-top:1.25rem">
-    <div class="ptitle" id="mo-mom-title">📅 เทียบกับเดือนก่อน</div>
-    <div id="moMoM" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div>
-  </div>
+  <div class="panel" style="margin-top:1.25rem"><div class="ptitle" id="mo-mom-title">📅 เทียบกับเดือนก่อน</div><div id="moMoM" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px"></div></div>
 </div>
 
-<!-- ══ INPUT ══ -->
+<!-- ══ ENG/VIEWS INPUT ══ -->
 <div class="page" id="page-input">
-  <div class="info">
-    กรอก <strong style="color:var(--blue)">👁 ยอดวิว</strong> และ <strong style="color:var(--ac)">❤️ Engagement</strong> รายเดือน ·
-    <code>💾 บันทึก</code> เซฟและ sync ขึ้น cloud · <code>🔄 รีเฟรช</code> ดึงข้อมูลล่าสุดจากทุกคน · <code>⬇ Export CSV</code> ดาวน์โหลด
-    <br><span id="lastSyncInfo" style="color:var(--ac2);font-weight:600"></span>
-  </div>
-  <div class="de-wrap">
-    <table class="det"><thead id="dHead"></thead><tbody id="dBody"></tbody><tfoot id="dFoot"></tfoot></table>
-  </div>
+  <div class="info">กรอก <strong style="color:var(--blue)">👁 ยอดวิว</strong> และ <strong style="color:var(--ac)">❤️ Engagement</strong> รายเดือน · <code>💾 บันทึก</code> sync ขึ้น cloud · <code>🔄 รีเฟรช</code> ดึงข้อมูลล่าสุด</div>
+  <div class="de-wrap"><table class="det"><thead id="dHead"></thead><tbody id="dBody"></tbody><tfoot id="dFoot"></tfoot></table></div>
   <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn pr" onclick="doSave()">💾 บันทึก + Sync</button>
     <button class="btn sc" onclick="doLoad()">🔄 ดึงข้อมูลล่าสุด</button>
-    <button class="btn" onclick="if(confirm('ล้างข้อมูลทั้งหมด?')){clearAll()}">🗑 ล้างข้อมูล</button>
+    <button class="btn" onclick="if(confirm('ล้างข้อมูลทั้งหมด?')){clearAll()}">🗑 ล้าง</button>
   </div>
 </div>
 
@@ -400,75 +448,82 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ══ CONFIG ══
-const MB=[
-  {name:'ยูริน',  handle:'@ynyuxin_',    tier:'Tier 2',tc:'t2',color:'#7c3aed', igHandle:'@ynyuxin_',    ttHandle:'@ynyuxin_'},
-  {name:'เอมมี่', handle:'@emmyx_mi',    tier:'Tier 2',tc:'t2',color:'#0284c7', igHandle:'@emmyx_mi',    ttHandle:'@emmyx_mi'},
-  {name:'อินดี้', handle:'@cynthiana_q0',tier:'Tier 1',tc:'t1',color:'#db2777', igHandle:'@inq1x_',      ttHandle:'@cynthiana_q0'},
-  {name:'เวียร์', handle:'@xaweirblurr', tier:'Tier 2',tc:'t2',color:'#059669', igHandle:'@x.xaweirnpstt',ttHandle:'@xaweirblurr'},
-  {name:'เฟิร์ส', handle:'@1st_04',      tier:'Tier 2',tc:'t2',color:'#d97706', igHandle:'@f1rst_nz',    ttHandle:'@1_st04'},
-  {name:'พราว',   handle:'@prwjsuh',     tier:'Tier 1',tc:'t1',color:'#ea580c', igHandle:'@prwiiya',     ttHandle:'@prwjsuh'},
-  {name:'เนม',    handle:'@whynqme',     tier:'Tier 2',tc:'t2',color:'#0891b2', igHandle:'@whynqme',     ttHandle:'@whynqme'},
+// ════════════════════════════════════
+// CONFIG — ข้อมูลจริงจาก Excel (มี.ค. 2569)
+// ════════════════════════════════════
+const MB = [
+  {name:'ยูริน',  ttH:'@ynyuxin_',    igH:'@ynyuxin_',      tier:'Tier 2',tc:'t2',color:'#7c3aed',
+   ig_fol:104000, tt_fol:16400,  ig_er:19.98, tt_er:11.83, ig_views:14608028, tt_views:1100000},
+  {name:'เฟิร์ส', ttH:'@1_st04',      igH:'@f1rst_nz',      tier:'Tier 2',tc:'t2',color:'#0284c7',
+   ig_fol:8833,   tt_fol:129700, ig_er:1.65,  tt_er:15.02, ig_views:93900,    tt_views:874000},
+  {name:'เวียร์', ttH:'@xaweirblurr', igH:'@x.xaweirnpstt', tier:'Tier 2',tc:'t2',color:'#059669',
+   ig_fol:115000, tt_fol:232200, ig_er:10.05, tt_er:4.95,  ig_views:800000,   tt_views:45000},
+  {name:'เนม',    ttH:'@whynqme',     igH:'@whynqme',       tier:'Tier 2',tc:'t2',color:'#0891b2',
+   ig_fol:10852,  tt_fol:119011, ig_er:1.42,  tt_er:4.79,  ig_views:103152,   tt_views:283000},
+  {name:'เอมมี่', ttH:'@emmyx_mi',   igH:'@emmyx_mi',      tier:'Tier 2',tc:'t2',color:'#db2777',
+   ig_fol:8566,   tt_fol:133346, ig_er:0.79,  tt_er:26.50, ig_views:23600,    tt_views:231000},
+  {name:'พราว',   ttH:'@prwjsuh',    igH:'@prwiiya',       tier:'Tier 1',tc:'t1',color:'#ea580c',
+   ig_fol:11810,  tt_fol:70132,  ig_er:4.99,  tt_er:10.02, ig_views:128260,   tt_views:134000},
+  {name:'อินดี้', ttH:'@cynthiana_q0',igH:'@inq1x_',       tier:'Tier 1',tc:'t1',color:'#d97706',
+   ig_fol:1502,   tt_fol:70983,  ig_er:2.39,  tt_er:2.55,  ig_views:141399,   tt_views:360000},
 ];
-const MO_LBL=['ธ.ค. 68','ม.ค. 69','ก.พ. 69','มี.ค. 69','เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69','ต.ค. 69','พ.ย. 69','ธ.ค. 69'];
-const M=MB.length, MO=MO_LBL.length;
 
-const DEF={
-  views:[[1008492,1398678,1427495,2202646,0,0,0,0,0,0,0,0,0],[0,0,0,0,193638,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-  eng:  [[237722,241228,169740,779718,0,0,0,0,0,0,0,0,0],[0,0,0,0,268392,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0]],
-  // followers: [ig, tt] per member
-  fol: [
-    [104000, 16400],   // ยูริน ig, tt
-    [8566, 133346],    // เอมมี่
-    [0, 0],            // อินดี้ (ยังไม่มีข้อมูล)
-    [115000, 232200],  // เวียร์
-    [8833, 129700],    // เฟิร์ส
-    [0, 0],            // พราว
-    [10852, 119011],   // เนม
-  ]
+// Tier growth targets
+const TIER_CFG = {
+  'Tier 1': { fol_mo:[3,5], fol_half:[1.5,2.5], views_mo:15, eng_mo:10, tt_er_min:6.0, ig_er_min:5.0 },
+  'Tier 2': { fol_mo:[2,3], fol_half:[1.0,1.5], views_mo:10, eng_mo:7,  tt_er_min:4.0, ig_er_min:3.0 },
+  'Tier 3': { fol_mo:[1,2], fol_half:[0.5,1.0], views_mo:7,  eng_mo:5,  tt_er_min:2.5, ig_er_min:1.5 },
 };
 
-// ══ JSONBIN API ══
-function getCfg(){return{key:localStorage.getItem('n9_apiKey')||'',bin:localStorage.getItem('n9_binId')||''};}
-function hasCfg(){const c=getCfg();return c.key&&c.bin;}
-function setSyncStatus(state,txt){
-  const dot=document.getElementById('syncDot'),lbl=document.getElementById('syncLabel');
-  dot.className='sync-dot '+(state==='ok'?'ok':state==='err'?'err':state==='loading'?'loading':'');
-  lbl.textContent=txt;
+const MO_LBL = ['ธ.ค. 68','ม.ค. 69','ก.พ. 69','มี.ค. 69','เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69','ต.ค. 69','พ.ย. 69','ธ.ค. 69'];
+// Entry months start from เม.ย. 69
+const ENTRY_MO = ['เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69'];
+const M = MB.length, MO = MO_LBL.length;
+
+const DEF = {
+  views:[[1008492,1398678,1427495,2202646,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,193638,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0]],
+  eng:  [[237722,241228,169740,779718,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,268392,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0]],
+  // fol: [ig_fol, tt_fol] per member (current, updated monthly)
+  fol: MB.map(m => [m.ig_fol, m.tt_fol]),
+  // channel: per member per ENTRY_MO: {ig_fol, ig_views, ig_likes, ig_comments, ig_saves, ig_shares, ig_new_fol, ig_er, tt_fol, tt_post_views, tt_profile_views, tt_likes, tt_comments, tt_shares, tt_er}
+  channel: MB.map(() => ENTRY_MO.map(() => ({
+    ig_fol:0,ig_views:0,ig_likes:0,ig_comments:0,ig_saves:0,ig_shares:0,ig_new_fol:0,ig_er:0,
+    tt_fol:0,tt_post_views:0,tt_profile_views:0,tt_likes:0,tt_comments:0,tt_shares:0,tt_er:0
+  })))
+};
+
+// ════ JSONBIN ════
+function getCfg(){return{key:localStorage.getItem('n9_key')||'',bin:localStorage.getItem('n9_bin')||''};}
+function hasCfg(){const c=getCfg();return !!(c.key&&c.bin);}
+function setSS(state,txt){
+  const d=document.getElementById('syncDot'),l=document.getElementById('syncLabel');
+  d.className='sync-dot '+(state==='ok'?'ok':state==='err'?'err':state==='loading'?'loading':'');
+  l.textContent=txt;
 }
 async function remoteLoad(){
-  if(!hasCfg()) return null;
-  const {key,bin}=getCfg();
-  setSyncStatus('loading','กำลังโหลด...');
-  try{
-    const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`,{headers:{'X-Master-Key':key,'X-Bin-Meta':'false'}});
-    if(!r.ok) throw new Error(r.status);
-    const data=await r.json();
-    setSyncStatus('ok','Synced ✓');
-    return data;
-  }catch(e){setSyncStatus('err','โหลดไม่ได้');return null;}
+  if(!hasCfg())return null;
+  const {key,bin}=getCfg();setSS('loading','กำลังโหลด...');
+  try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`,{headers:{'X-Master-Key':key,'X-Bin-Meta':'false'}});if(!r.ok)throw 0;const d=await r.json();setSS('ok','Synced ✓');return d;}
+  catch(e){setSS('err','โหลดไม่ได้');return null;}
 }
 async function remoteSave(data){
-  if(!hasCfg()) return false;
-  const {key,bin}=getCfg();
-  setSyncStatus('loading','กำลังบันทึก...');
-  try{
-    const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':key},body:JSON.stringify(data)});
-    if(!r.ok) throw new Error(r.status);
-    setSyncStatus('ok','Saved ✓');
-    const now=new Date().toLocaleTimeString('th-TH');
-    const el=document.getElementById('lastSyncInfo');if(el)el.textContent='บันทึกล่าสุด '+now;
-    return true;
-  }catch(e){setSyncStatus('err','บันทึกไม่ได้');return false;}
+  if(!hasCfg())return false;
+  const {key,bin}=getCfg();setSS('loading','กำลังบันทึก...');
+  try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bin}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':key},body:JSON.stringify(data)});if(!r.ok)throw 0;setSS('ok','Saved ✓');return true;}
+  catch(e){setSS('err','บันทึกไม่ได้');return false;}
 }
 
-// ══ DATA OPS ══
+// ════ DATA ════
 function localLoad(){
-  const s=localStorage.getItem('n9_v4');
-  if(s){try{const d=JSON.parse(s);if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);return d;}catch(e){}}
-  return{views:DEF.views.map(r=>[...r]),eng:DEF.eng.map(r=>[...r]),fol:DEF.fol.map(r=>[...r])};
+  const s=localStorage.getItem('n9_v5');
+  if(s){try{const d=JSON.parse(s);
+    if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);
+    if(!d.channel)d.channel=DEF.channel.map(m=>m.map(mo=>({...mo})));
+    return d;}catch(e){}}
+  return{views:DEF.views.map(r=>[...r]),eng:DEF.eng.map(r=>[...r]),fol:DEF.fol.map(r=>[...r]),channel:DEF.channel.map(m=>m.map(mo=>({...mo})))};
 }
-function localSave(d){localStorage.setItem('n9_v4',JSON.stringify(d));}
+function localSave(d){localStorage.setItem('n9_v5',JSON.stringify(d));}
+
 function readInps(){
   const d={views:[],eng:[]};
   for(let i=0;i<M;i++){d.views[i]=[];d.eng[i]=[];
@@ -478,51 +533,55 @@ function readInps(){
       d.eng[i][j]=ee?parseInt(ee.value.replace(/,/g,''))||0:0;
     }}return d;
 }
+function readChannelInps(){
+  const ch=cd.channel.map(m=>m.map(mo=>({...mo})));
+  for(let i=0;i<M;i++){
+    for(let mi=0;mi<ENTRY_MO.length;mi++){
+      const fields=['ig_fol','ig_views','ig_likes','ig_comments','ig_saves','ig_shares','ig_new_fol','tt_fol','tt_post_views','tt_profile_views','tt_likes','tt_comments','tt_shares'];
+      fields.forEach(f=>{const el=document.getElementById(`ch_${i}_${mi}_${f}`);if(el)ch[i][mi][f]=parseInt(el.value.replace(/,/g,''))||0;});
+      // auto-calc ER
+      const igV=ch[i][mi].ig_views||1;
+      ch[i][mi].ig_er = igV>0 ? ((ch[i][mi].ig_likes+ch[i][mi].ig_comments+ch[i][mi].ig_saves+ch[i][mi].ig_shares)/igV*100) : 0;
+      const ttV=ch[i][mi].tt_post_views||1;
+      ch[i][mi].tt_er = ttV>0 ? ((ch[i][mi].tt_likes+ch[i][mi].tt_comments+ch[i][mi].tt_shares)/ttV*100) : 0;
+    }
+  }
+  return ch;
+}
+
 async function doSave(){
-  const d=readInps();
-  d.fol=cd.fol;
+  const d=readInps();d.fol=cd.fol;d.channel=readChannelInps();
   localSave(d);cd=d;
   const ok=await remoteSave(d);
-  if(ok){showToast('บันทึกแล้ว ✓ ทุกคนจะเห็นข้อมูลใหม่');}
-  else if(!hasCfg()){showToast('บันทึก Local แล้ว (ยังไม่ได้ตั้ง Sync)');}
-  else{showToast('บันทึก Local แล้ว แต่ Sync ไม่สำเร็จ');}
+  showToast(ok?'บันทึก + Sync แล้ว ✓':'บันทึก Local แล้ว (Sync ไม่สำเร็จ)');
   refreshAll();
 }
 async function doLoad(){
   let d=await remoteLoad();
-  if(d&&d.views&&d.eng){
-    if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);
-    localSave(d);cd=d;showToast('โหลดข้อมูลล่าสุดแล้ว ✓');
-  }else{cd=localLoad();if(!hasCfg())showToast('ใช้ข้อมูล Local (ยังไม่ได้ตั้ง Sync)');}
-  buildTbl();buildFolTables();buildRange();refreshAll();
+  if(d&&d.views){if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);if(!d.channel)d.channel=DEF.channel.map(m=>m.map(mo=>({...mo})));localSave(d);cd=d;showToast('โหลดข้อมูลล่าสุดแล้ว ✓');}
+  else{cd=localLoad();if(!hasCfg())showToast('ใช้ข้อมูล Local');}
+  buildTbl();buildEntryTable();buildFolTables();buildRange();refreshAll();
 }
-function clearAll(){localStorage.removeItem('n9_v4');cd=localLoad();buildTbl();buildFolTables();buildRange();refreshAll();showToast('ล้างข้อมูลแล้ว');}
+function clearAll(){localStorage.removeItem('n9_v5');cd=localLoad();buildTbl();buildEntryTable();buildFolTables();buildRange();refreshAll();showToast('ล้างข้อมูลแล้ว');}
 
-// ══ SETUP MODAL ══
-function checkSetup(){
-  if(!hasCfg()){document.getElementById('setupModal').style.display='flex';}
-  else{document.getElementById('setupModal').style.display='none';setSyncStatus('ok','เชื่อมต่อแล้ว');doLoad();}
-}
 function saveSetup(){
   const k=document.getElementById('apiKeyInput').value.trim();
   const b=document.getElementById('binIdInput').value.trim();
   if(!k||!b){showToast('กรุณากรอก Key และ Bin ID');return;}
-  localStorage.setItem('n9_apiKey',k);localStorage.setItem('n9_binId',b);
-  document.getElementById('setupModal').style.display='none';setSyncStatus('ok','เชื่อมต่อแล้ว');
-  doLoad();showToast('บันทึก config แล้ว กำลังโหลดข้อมูล...');
+  localStorage.setItem('n9_key',k);localStorage.setItem('n9_bin',b);
+  document.getElementById('setupModal').style.display='none';setSS('ok','เชื่อมต่อแล้ว');doLoad();
 }
-function useLocalOnly(){document.getElementById('setupModal').style.display='none';setSyncStatus('','Local เท่านั้น');cd=localLoad();buildTbl();buildFolTables();buildRange();refreshAll();}
+function useLocalOnly(){document.getElementById('setupModal').style.display='none';setSS('','Local');cd=localLoad();buildTbl();buildEntryTable();buildFolTables();buildRange();refreshAll();}
 function openSettings(){const {key,bin}=getCfg();document.getElementById('apiKeyInput').value=key;document.getElementById('binIdInput').value=bin;document.getElementById('setupModal').style.display='flex';}
 
-// ══ HELPERS ══
-let cd=localLoad();
-const s=r=>r.reduce((a,b)=>a+b,0);
-const fN=n=>n>=1e6?(n/1e6).toFixed(2)+'M':n>=1000?(n/1000).toFixed(1)+'K':String(n);
-const fF=n=>n.toLocaleString();
+let cd = localLoad();
+const s = r => r.reduce((a,b)=>a+b,0);
+const fN = n => n>=1e6?(n/1e6).toFixed(2)+'M':n>=1000?(n/1000).toFixed(1)+'K':String(Math.round(n));
+const fF = n => n.toLocaleString();
+const pF = n => n.toFixed(2)+'%';
 
 function cmp(d){
-  const et=d.eng.map(s),vt=d.views.map(s);
-  const te=s(et),tv=s(vt);
+  const et=d.eng.map(s),vt=d.views.map(s),te=s(et),tv=s(vt);
   const mes=MO_LBL.map((_,j)=>d.eng.reduce((a,r)=>a+r[j],0));
   const mvs=MO_LBL.map((_,j)=>d.views.reduce((a,r)=>a+r[j],0));
   const byE=[...MB.map((m,i)=>({...m,i,e:et[i],v:vt[i]}))].sort((a,b)=>b.e-a.e||a.i-b.i);
@@ -530,21 +589,23 @@ function cmp(d){
   return{et,vt,te,tv,mes,mvs,bemi:mes.indexOf(Math.max(...mes)),bvmi:mvs.indexOf(Math.max(...mvs)),byE,byV};
 }
 
-let hs=new Set(),ovm='eng',rkm='eng';
-let Ch={};
+let hs=new Set(),ovm='eng',rkm='eng',Ch={};
 
+// ════ OVERVIEW ════
 function buildMC(c){
-  const cs=[{lb:'Engagement รวม',v:fF(c.te),sub:'ทุกคนรวมกัน',cl:'ce'},{lb:'ยอดวิว รวม',v:fF(c.tv),sub:'ทุกคนรวมกัน',cl:'cv'},{lb:'เดือน Eng ดีสุด',v:MO_LBL[c.bemi],sub:fF(c.mes[c.bemi])+' Eng',cl:'cg'},{lb:'เดือน Views ดีสุด',v:MO_LBL[c.bvmi],sub:fF(c.mvs[c.bvmi])+' Views',cl:'cg2'}];
-  document.getElementById('mCards').innerHTML=cs.map(x=>`<div class="mc ${x.cl}"><div class="mc-lb">${x.lb}</div><div class="mc-v">${x.v}</div><div class="mc-sub">${x.sub}</div></div>`).join('');
+  document.getElementById('mCards').innerHTML=[
+    {lb:'Engagement รวม',v:fF(c.te),sub:'ทุกคนรวมกัน',cl:'ce'},
+    {lb:'ยอดวิว รวม',v:fF(c.tv),sub:'ทุกคนรวมกัน',cl:'cv'},
+    {lb:'เดือน Eng ดีสุด',v:MO_LBL[c.bemi],sub:fF(c.mes[c.bemi])+' Eng',cl:'cg'},
+    {lb:'เดือน Views ดีสุด',v:MO_LBL[c.bvmi],sub:fF(c.mvs[c.bvmi])+' Views',cl:'cg2'},
+  ].map(x=>`<div class="mc ${x.cl}"><div class="mc-lb">${x.lb}</div><div class="mc-v">${x.v}</div><div class="mc-sub">${x.sub}</div></div>`).join('');
 }
-
 function buildLeg(){
   document.getElementById('leg').innerHTML=MB.map((m,i)=>`<div class="li ${hs.has(i)?'off':''}" onclick="tgS(${i})"><div class="ld" style="background:${m.color}"></div>${m.name}</div>`).join('');
   document.getElementById('pills').innerHTML=`<button class="pill" onclick="showAll()">ทุกคน</button>`+MB.map((m,i)=>`<button class="pill" onclick="tgS(${i})" style="border-color:${m.color}70;color:${hs.has(i)?'var(--mu)':m.color}">${m.name}</button>`).join('');
 }
 function tgS(i){hs.has(i)?hs.delete(i):hs.add(i);buildLeg();buildTrend();}
 function showAll(){hs.clear();buildLeg();buildTrend();}
-
 function setOvM(m){ovm=m;document.getElementById('ov-te').classList.toggle('on',m==='eng');document.getElementById('ov-tv').classList.toggle('on',m==='views');buildTrend();}
 function buildTrend(){
   if(Ch.tr)Ch.tr.destroy();
@@ -555,6 +616,131 @@ function buildTrend(){
       scales:{x:{grid:{color:'#e8ecf4'},ticks:{color:'#8892a4',font:{size:11},maxRotation:0,autoSkip:false}},y:{grid:{color:'#e8ecf4'},ticks:{color:'#8892a4',font:{size:11},callback:v=>fN(v)}}}}});
 }
 
+// ════ MONTHLY ENTRY (กรอกยอดรายเดือน) ════
+let entryMo = 0; // index into ENTRY_MO
+function prevEntryMo(){entryMo=Math.max(0,entryMo-1);buildEntryTable();}
+function nextEntryMo(){entryMo=Math.min(ENTRY_MO.length-1,entryMo+1);buildEntryTable();}
+
+function buildEntryPills(){
+  document.getElementById('entryMoPills').innerHTML=ENTRY_MO.map((mo,i)=>
+    `<button class="pill" onclick="entryMo=${i};buildEntryTable()" id="emp_${i}">${mo}</button>`
+  ).join('');
+}
+
+function buildEntryTable(){
+  document.getElementById('entry-mo-label').textContent=ENTRY_MO[entryMo];
+  ENTRY_MO.forEach((_,i)=>{const p=document.getElementById(`emp_${i}`);if(!p)return;p.style.borderColor=i===entryMo?'var(--ac)':'var(--bd)';p.style.color=i===entryMo?'var(--ac)':'var(--mu)';});
+
+  const ch = cd.channel||DEF.channel.map(m=>m.map(mo=>({...mo})));
+  document.getElementById('entryCards').innerHTML = MB.map((m,i)=>{
+    const d = ch[i][entryMo];
+    const prevD = entryMo > 0 ? ch[i][entryMo-1] : null;
+    const igGrowth = prevD && prevD.ig_fol > 0 ? ((d.ig_fol - prevD.ig_fol)/prevD.ig_fol*100).toFixed(1) : null;
+    const ttGrowth = prevD && prevD.tt_fol > 0 ? ((d.tt_fol - prevD.tt_fol)/prevD.tt_fol*100).toFixed(1) : null;
+    const T = TIER_CFG[m.tier];
+
+    return `<div class="range-card" style="margin-bottom:12px">
+      <div class="range-header">
+        <div style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px">
+          <div class="mdot" style="background:${m.color};width:12px;height:12px;border-radius:50%"></div>
+          <span style="color:${m.color}">${m.name}</span>
+          <span class="tier ${m.tc}">${m.tier}</span>
+          <span style="font-size:11px;color:var(--mu)">${m.ttH} / ${m.igH}</span>
+        </div>
+        <div style="font-size:11px;color:var(--mu)">Baseline IG: ${fF(m.ig_fol)} · TT: ${fF(m.tt_fol)}</div>
+      </div>
+      <div class="grid2">
+        <!-- IG -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#9d174d;margin-bottom:10px;padding:5px 8px;background:#fce7f3;border-radius:6px">📸 Instagram</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="font-size:11px;color:var(--mu)">Followers<br><input class="inp ig" id="ch_${i}_${entryMo}_ig_fol" type="text" value="${d.ig_fol||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Views/Post<br><input class="inp" id="ch_${i}_${entryMo}_ig_views" type="text" value="${d.ig_views||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Likes<br><input class="inp" id="ch_${i}_${entryMo}_ig_likes" type="text" value="${d.ig_likes||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Comments<br><input class="inp" id="ch_${i}_${entryMo}_ig_comments" type="text" value="${d.ig_comments||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Saves<br><input class="inp" id="ch_${i}_${entryMo}_ig_saves" type="text" value="${d.ig_saves||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Shares<br><input class="inp" id="ch_${i}_${entryMo}_ig_shares" type="text" value="${d.ig_shares||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">New Followers<br><input class="inp ig" id="ch_${i}_${entryMo}_ig_new_fol" type="text" value="${d.ig_new_fol||0}" onblur="fmt(this)"></label>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:4px">IG ER% (คำนวณอัตโนมัติ)</div>
+            <div class="mc-v" id="live_ig_er_${i}_${entryMo}" style="font-size:18px;color:#9d174d">${d.ig_er?.toFixed(2)||'0.00'}%</div>
+            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.ig_er_min}% · ${d.ig_er>=T.ig_er_min?'<span class="badge badge-ok">✓ ผ่านเป้า</span>':'<span class="badge badge-bad">ต่ำกว่าเป้า</span>'}</div>
+            ${igGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(igGrowth)>=T.fol_mo[0]?'delta-up':'delta-dn'}">${igGrowth>0?'+':''}${igGrowth}%</span> (เป้า +${T.fol_mo[0]}%)</div>`:''}
+          </div>
+        </div>
+        <!-- TikTok -->
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#9f1239;margin-bottom:10px;padding:5px 8px;background:#fef2f2;border-radius:6px">🎵 TikTok</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="font-size:11px;color:var(--mu)">Followers<br><input class="inp ig" id="ch_${i}_${entryMo}_tt_fol" type="text" value="${d.tt_fol||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Post Views (รวม)<br><input class="inp" id="ch_${i}_${entryMo}_tt_post_views" type="text" value="${d.tt_post_views||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Profile Views<br><input class="inp" id="ch_${i}_${entryMo}_tt_profile_views" type="text" value="${d.tt_profile_views||0}" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Likes<br><input class="inp" id="ch_${i}_${entryMo}_tt_likes" type="text" value="${d.tt_likes||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Comments<br><input class="inp" id="ch_${i}_${entryMo}_tt_comments" type="text" value="${d.tt_comments||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+            <label style="font-size:11px;color:var(--mu)">Avg Shares<br><input class="inp" id="ch_${i}_${entryMo}_tt_shares" type="text" value="${d.tt_shares||0}" oninput="liveER(${i},${entryMo})" onblur="fmt(this)"></label>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:4px">TT ER% (คำนวณอัตโนมัติ)</div>
+            <div class="mc-v" id="live_tt_er_${i}_${entryMo}" style="font-size:18px;color:#9f1239">${d.tt_er?.toFixed(2)||'0.00'}%</div>
+            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.tt_er_min}% · ${d.tt_er>=T.tt_er_min?'<span class="badge badge-ok">✓ ผ่านเป้า</span>':'<span class="badge badge-bad">ต่ำกว่าเป้า</span>'}</div>
+            ${ttGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(ttGrowth)>=T.fol_mo[0]?'delta-up':'delta-dn'}">${ttGrowth>0?'+':''}${ttGrowth}%</span> (เป้า +${T.fol_mo[0]}%)</div>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function liveER(mi, moi){
+  // Live-compute ER as user types
+  const igViews = parseInt(document.getElementById(`ch_${mi}_${moi}_ig_views`)?.value)||0;
+  const igLikes = parseInt(document.getElementById(`ch_${mi}_${moi}_ig_likes`)?.value)||0;
+  const igComments = parseInt(document.getElementById(`ch_${mi}_${moi}_ig_comments`)?.value)||0;
+  const igSaves = parseInt(document.getElementById(`ch_${mi}_${moi}_ig_saves`)?.value)||0;
+  const igShares = parseInt(document.getElementById(`ch_${mi}_${moi}_ig_shares`)?.value)||0;
+  const igER = igViews > 0 ? ((igLikes+igComments+igSaves+igShares)/igViews*100) : 0;
+  const el1 = document.getElementById(`live_ig_er_${mi}_${moi}`);
+  if(el1) el1.textContent = igER.toFixed(2)+'%';
+
+  const ttViews = parseInt(document.getElementById(`ch_${mi}_${moi}_tt_post_views`)?.value)||0;
+  const ttLikes = parseInt(document.getElementById(`ch_${mi}_${moi}_tt_likes`)?.value)||0;
+  const ttComments = parseInt(document.getElementById(`ch_${mi}_${moi}_tt_comments`)?.value)||0;
+  const ttShares = parseInt(document.getElementById(`ch_${mi}_${moi}_tt_shares`)?.value)||0;
+  const ttER = ttViews > 0 ? ((ttLikes+ttComments+ttShares)/ttViews*100) : 0;
+  const el2 = document.getElementById(`live_tt_er_${mi}_${moi}`);
+  if(el2) el2.textContent = ttER.toFixed(2)+'%';
+}
+function saveEntry(){doSave();}
+
+// ════ GROWTH TARGETS ════
+function buildGrowthTargets(){
+  document.getElementById('memberTargetBody').innerHTML = MB.map((m,i)=>{
+    const T = TIER_CFG[m.tier];
+    const ttFolAdd = Math.round(m.tt_fol * T.fol_mo[0] / 100);
+    const ttFolHalf = Math.round(m.tt_fol * T.fol_half[0] / 100);
+    const ttErTgt = Math.min(m.tt_er * 1.05, 30).toFixed(2);
+    const igErTgt = Math.min(m.ig_er * 1.05, 25).toFixed(2);
+    const ttErOk = m.tt_er >= T.tt_er_min;
+    const igErOk = m.ig_er >= T.ig_er_min;
+    return `<tr>
+      <td><div class="mn" style="color:${m.color}">${m.name}</div><div class="mh">${m.ttH}</div></td>
+      <td><span class="tier ${m.tc}">${m.tier}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace">${fF(m.ig_fol)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace">${fF(m.tt_fol)}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">+${fF(ttFolAdd)} คน</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#6c5ce7;font-weight:700">+${fF(ttFolHalf)} คน</td>
+      <td style="font-family:'IBM Plex Mono',monospace" class="${ttErOk?'er-good':'er-bad'}">${m.tt_er}%</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">≥${ttErTgt}%</td>
+      <td style="font-family:'IBM Plex Mono',monospace" class="${igErOk?'er-good':'er-bad'}">${m.ig_er}%</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">≥${igErTgt}%</td>
+      <td style="font-weight:700;color:#0984e3">+${T.views_mo}%</td>
+      <td style="font-weight:700;color:#6c5ce7">+${T.eng_mo}%</td>
+    </tr>`;
+  }).join('');
+}
+
+// ════ RANKING ════
 function setRkM(m){
   rkm=m;
   document.getElementById('rk-te').classList.toggle('on',m==='eng');document.getElementById('rk-tv').classList.toggle('on',m==='views');
@@ -570,7 +756,7 @@ function buildRkTbl(c){
   document.getElementById('rankBody').innerHTML=rkd.map((m,ri)=>{
     const pri=rkm==='eng'?m.e:m.v,sec=rkm==='eng'?m.v:m.e;
     return`<tr><td><span class="rbadge ${bd[ri]}">${ri+1}</span></td>
-    <td><div class="mn" style="color:${m.color}">${m.name}</div><div class="mh">${m.handle}</div></td>
+    <td><div class="mn" style="color:${m.color}">${m.name}</div><div class="mh">${m.ttH}</div></td>
     <td><span class="tier ${m.tc}">${m.tier}</span></td>
     <td><div class="numr">${fF(pri)}</div><div class="bbg"><div class="bfill" style="width:${(pri/mx*100).toFixed(1)}%;background:${m.color}"></div></div></td>
     <td><div class="numr2">${fF(sec)}</div></td></tr>`;
@@ -585,136 +771,99 @@ function buildRkBar(c){
       scales:{x:{grid:{color:'#e8ecf4'},ticks:{color:'#8892a4',font:{size:10},callback:v=>fN(v)}},y:{grid:{color:'transparent'},ticks:{color:'#1a1d2e',font:{size:12}}}}}});
 }
 
-// ══ FOLLOWERS ══
+// ════ FOLLOWERS ════
 function buildFolTables(){
   const fol=cd.fol||DEF.fol;
-  // Sort TikTok
   const ttData=[...MB.map((m,i)=>({...m,i,fol:fol[i][1]}))].sort((a,b)=>b.fol-a.fol);
   const igData=[...MB.map((m,i)=>({...m,i,fol:fol[i][0]}))].sort((a,b)=>b.fol-a.fol);
   const maxTT=Math.max(...ttData.map(d=>d.fol),1);
   const maxIG=Math.max(...igData.map(d=>d.fol),1);
-  const badgeCls=['rb1','rb2','rb3','rbn','rbn','rbn','rbn'];
-
-  const renderTable=(data,maxV,platform)=>{
-    const plCls=platform==='TikTok'?'plat-tt':'plat-ig';
-    return `<thead><tr>
-      <th style="width:32px">#</th>
-      <th>น้อง</th>
-      <th class="nr">Followers</th>
-      <th style="width:120px">Bar</th>
-    </tr></thead><tbody>`+data.map((m,ri)=>{
-      const pct=(m.fol/maxV*100).toFixed(1);
-      return`<tr>
-        <td><span class="rbadge ${badgeCls[ri]}">${ri+1}</span></td>
-        <td>
-          <div style="font-weight:600;color:${m.color}">${m.name}</div>
-          <div style="font-size:10px;color:var(--mu)">${platform==='TikTok'?m.ttHandle:m.igHandle}</div>
-        </td>
-        <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;color:${m.color}">${m.fol>0?fF(m.fol):'—'}</td>
-        <td><div class="fol-bar-bg"><div class="fol-bar-fill" style="width:${pct}%;background:${m.color}"></div></div></td>
-      </tr>`;
-    }).join('')+'</tbody>';
-  };
-
-  document.getElementById('ttFolTable').innerHTML=renderTable(ttData,maxTT,'TikTok');
-  document.getElementById('igFolTable').innerHTML=renderTable(igData,maxIG,'IG');
-
-  // Input table
+  const bd=['rb1','rb2','rb3','rbn','rbn','rbn','rbn'];
+  const renderFol=(data,maxV,isIG)=>`<thead><tr><th style="width:30px">#</th><th>น้อง</th><th style="text-align:right">Followers</th><th>Bar</th></tr></thead><tbody>`+data.map((m,ri)=>
+    `<tr><td><span class="rbadge ${bd[ri]}">${ri+1}</span></td>
+    <td><div style="font-weight:600;color:${m.color}">${m.name}</div><div style="font-size:10px;color:var(--mu)">${isIG?m.igH:m.ttH}</div></td>
+    <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700;color:${m.color}">${m.fol>0?fF(m.fol):'—'}</td>
+    <td style="width:120px"><div class="bbg"><div class="bfill" style="width:${(m.fol/maxV*100).toFixed(1)}%;background:${m.color}"></div></div></td>
+    </tr>`).join('')+'</tbody>';
+  document.getElementById('ttFolTable').innerHTML=renderFol(ttData,maxTT,false);
+  document.getElementById('igFolTable').innerHTML=renderFol(igData,maxIG,true);
   const fol2=cd.fol||DEF.fol;
-  document.getElementById('folInputTable').innerHTML=`<thead><tr>
-    <th>น้อง</th><th>IG Handle</th><th>IG Followers</th><th>TikTok Handle</th><th>TikTok Followers</th>
-  </tr></thead><tbody>`+MB.map((m,i)=>`<tr>
+  document.getElementById('folInputTable').innerHTML=`<thead><tr><th>น้อง</th><th>Tier</th><th>IG Handle</th><th>IG Followers</th><th>TT Handle</th><th>TT Followers</th></tr></thead><tbody>`
+    +MB.map((m,i)=>`<tr>
     <td><div style="font-weight:600;color:${m.color}">${m.name}</div></td>
-    <td style="font-size:11px;color:var(--mu)">${m.igHandle}</td>
-    <td><input class="fol-inp" id="fol_ig_${i}" value="${fol2[i][0]}" type="text"></td>
-    <td style="font-size:11px;color:var(--mu)">${m.ttHandle}</td>
-    <td><input class="fol-inp" id="fol_tt_${i}" value="${fol2[i][1]}" type="text"></td>
-  </tr>`).join('')+'</tbody>';
+    <td><span class="tier ${m.tc}">${m.tier}</span></td>
+    <td style="font-size:11px;color:var(--mu)">${m.igH}</td>
+    <td><input class="inp ig" id="fol_ig_${i}" value="${fol2[i][0]}" type="text"></td>
+    <td style="font-size:11px;color:var(--mu)">${m.ttH}</td>
+    <td><input class="inp ig" id="fol_tt_${i}" value="${fol2[i][1]}" type="text"></td>
+    </tr>`).join('')+'</tbody>';
 }
-
 async function saveFol(){
-  const fol=MB.map((m,i)=>[
-    parseInt(document.getElementById(`fol_ig_${i}`).value)||0,
-    parseInt(document.getElementById(`fol_tt_${i}`).value)||0
-  ]);
-  cd.fol=fol;
-  localSave(cd);
+  const fol=MB.map((m,i)=>[parseInt(document.getElementById(`fol_ig_${i}`).value)||0,parseInt(document.getElementById(`fol_tt_${i}`).value)||0]);
+  cd.fol=fol;localSave(cd);
   const ok=await remoteSave(cd);
-  if(ok)showToast('บันทึก Followers แล้ว ✓ ทุกคนเห็นข้อมูลใหม่');
-  else showToast('บันทึก Local แล้ว');
-  buildFolTables();
+  showToast(ok?'บันทึก Followers แล้ว ✓':'บันทึก Local แล้ว');buildFolTables();
 }
 
-// ══ RANGE รายเดือน ══
-let rangeMo=3, rngMetric='eng'; // default: มีนาคม (index 3)
+// ════ RANGE ════
+let rangeMo=0,rngMetric='eng';
 function setRngM(m){rngMetric=m;document.getElementById('rng-te').classList.toggle('on',m==='eng');document.getElementById('rng-tv').classList.toggle('on',m==='views');buildRange();}
 function prevRangeMo(){rangeMo=Math.max(0,rangeMo-1);buildRange();}
 function nextRangeMo(){rangeMo=Math.min(MO-1,rangeMo+1);buildRange();}
-
 function buildRange(){
   document.getElementById('range-mo-label').textContent=MO_LBL[rangeMo];
   const metLabel=rngMetric==='eng'?'Engagement':'ยอดวิว';
   document.getElementById('rng-panel-title').textContent=`🎯 Progress ${metLabel} — รายคน`;
-
-  const engTarget=parseInt((document.getElementById('rng-target-eng').value||'').replace(/,/g,''))||300000;
-  const viewsTarget=parseInt((document.getElementById('rng-target-views').value||'').replace(/,/g,''))||1000000;
-  const target=rngMetric==='eng'?engTarget:viewsTarget;
-
   const mx=rngMetric==='eng'?cd.eng:cd.views;
   const data=MB.map((m,i)=>({...m,i,val:mx[i][rangeMo]}));
   const totalVal=data.reduce((s,d)=>s+d.val,0);
-  const halfTarget=target*0.5; // ควรทำได้ ≥50% ณ ครึ่งเดือน
 
-  // Summary cards
-  const above=data.filter(d=>d.val>=halfTarget).length;
-  const avgPct=target>0?(totalVal/MB.length/target*100):0;
+  // Per-member target based on tier
+  const sorted=[...data].sort((a,b)=>b.val-a.val);
+
   document.getElementById('rangeSummary').innerHTML=[
-    {lb:'เป้ารายคน/เดือน',v:fN(target),sub:metLabel,c:'#6c5ce7'},
-    {lb:'ทำได้แล้วเฉลี่ย',v:fN(Math.round(totalVal/MB.length)),sub:'ต่อคน',c:'#0984e3'},
-    {lb:'% เฉลี่ยต่อเป้า',v:avgPct.toFixed(1)+'%',sub:`${above}/${MB.length} คน ≥50%`,c:avgPct>=50?'#059669':'#d97706'},
-    {lb:'เหลืออีก (เฉลี่ย)',v:fN(Math.max(0,Math.round(target-totalVal/MB.length))),sub:'ถึงจะถึงเป้า',c:'#e17055'},
+    {lb:'รวมทุกคน',v:fN(totalVal),sub:metLabel,c:'#6c5ce7'},
+    {lb:'เฉลี่ยต่อคน',v:fN(Math.round(totalVal/M)),sub:'ต่อคน',c:'#0984e3'},
+    {lb:'คนที่มีข้อมูล',v:data.filter(d=>d.val>0).length+'/'+M,sub:'คน',c:'#059669'},
   ].map(x=>`<div class="rscard" style="border-top:3px solid ${x.c}"><div class="rscard-label">${x.lb}</div><div class="rscard-val" style="color:${x.c}">${x.v}</div><div class="rscard-sub">${x.sub}</div></div>`).join('');
 
-  // Per-person cards sorted by val desc
-  const sorted=[...data].sort((a,b)=>b.val-a.val);
   document.getElementById('rangeCards').innerHTML=sorted.map(m=>{
-    const pct=target>0?Math.min(100,m.val/target*100):0;
-    const remain=Math.max(0,target-m.val);
-    const halfReach=m.val>=halfTarget;
-    const pctCls=pct>=50?'pct-ok':pct>=25?'pct-warn':'pct-danger';
-    const statusEmoji=pct>=100?'🏆':pct>=50?'✅':pct>=25?'⚠️':'🔴';
+    // No fixed target — show progress vs previous month
+    const prevVal=rangeMo>0?(rngMetric==='eng'?cd.eng:cd.views)[m.i][rangeMo-1]:0;
+    const growth=prevVal>0?((m.val-prevVal)/prevVal*100):0;
+    const T=TIER_CFG[m.tier];
+    const growthTarget=rngMetric==='eng'?T.eng_mo:T.views_mo;
+    const pct=prevVal>0?Math.min(100,growth):0;
+    const onTarget=growth>=growthTarget*0.5; // ≥50% of monthly target by mid-month
+    const statusEmoji=growth>=growthTarget?'🏆':growth>=growthTarget*0.5?'✅':growth>=0?'⚠️':'🔴';
+    const pctCls=growth>=growthTarget?'pct-ok':growth>=growthTarget*0.5?'pct-warn':'pct-danger';
     return`<div class="range-card">
       <div class="range-header">
-        <div class="range-name">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:700">
           <div class="mdot" style="background:${m.color};width:10px;height:10px;border-radius:50%"></div>
-          <span style="color:${m.color}">${m.name}</span>
-          <span style="font-size:11px;color:var(--mu)">${m.handle}</span>
-          <span class="tier ${m.tc}" style="font-size:9px">${m.tier}</span>
+          <span style="color:${m.color}">${m.name}</span><span class="tier ${m.tc}">${m.tier}</span>
+          <span style="font-size:11px;color:var(--mu)">${m.ttH}</span>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px">${statusEmoji}</span>
-          <span class="${pctCls}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700">${pct.toFixed(1)}%</span>
-          <span style="font-size:10px;color:var(--mu)">ของเป้า</span>
+          <span class="${pctCls}" style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700">${prevVal>0?(growth>=0?'+':'')+growth.toFixed(1)+'%':'—'}</span>
+          <span style="font-size:10px;color:var(--mu)">เทียบเดือนก่อน</span>
         </div>
       </div>
-      <div class="range-row">
-        <div class="range-label">ทำได้แล้ว</div>
-        <div class="range-prog-bg">
-          <div class="range-prog-fill" style="width:${pct}%;background:${m.color}"></div>
-          <div class="range-prog-mid"></div>
-        </div>
-        <div class="range-pct ${pctCls}">${fF(m.val)}</div>
-        <div class="range-remain">เป้า: ${fN(target)}</div>
+      <div style="display:flex;gap:16px;font-size:12px;margin-bottom:8px;flex-wrap:wrap">
+        <span>${metLabel} เดือนนี้: <strong style="font-family:'IBM Plex Mono',monospace">${fF(m.val)}</strong></span>
+        ${prevVal>0?`<span style="color:var(--mu)">เดือนก่อน: <strong>${fF(prevVal)}</strong></span><span>เพิ่ม: <span class="${growth>=0?'delta-up':'delta-dn'}" style="font-family:'IBM Plex Mono',monospace">${growth>=0?'+':''}${fF(Math.round(m.val-prevVal))}</span></span>`:'<span style="color:var(--mu)">ยังไม่มีเดือนก่อนเพื่อเปรียบเทียบ</span>'}
       </div>
-      <div style="display:flex;gap:16px;font-size:11px;flex-wrap:wrap">
-        <span style="color:var(--mu)">เหลืออีก: <strong style="color:${remain>0?'#dc2626':'#059669'}">${remain>0?fN(remain):'ถึงเป้าแล้ว! 🎉'}</strong></span>
-        <span style="color:var(--mu)">ครึ่งเดือน (≥50%): <strong class="${halfReach?'pct-ok':'pct-danger'}">${halfReach?'✅ ผ่าน':'❌ ยังไม่ถึง'}</strong></span>
-        <span style="color:var(--mu)">ต้องทำเพิ่ม/วัน: <strong>${remain>0?fN(Math.round(remain/15))+'/วัน':'—'}</strong></span>
+      ${prevVal>0?`<div class="range-prog-bg" style="margin-bottom:6px">
+        <div class="range-prog-fill" style="width:${Math.min(Math.max(0,growth/growthTarget*50+50),100)}%;background:${m.color}"></div>
+        <div class="range-prog-mid"></div>
       </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mu)"><span>−${growthTarget}%</span><span style="color:#6c5ce7;font-weight:600">เป้า Tier ${m.tier}: +${growthTarget}%/เดือน</span><span>+${growthTarget*2}%</span></div>`:''}
     </div>`;
   }).join('');
 }
 
+// ════ COMPARE ════
 function buildStacked(id,mx,key){
   if(Ch[key])Ch[key].destroy();
   Ch[key]=new Chart(document.getElementById(id).getContext('2d'),{type:'bar',
@@ -729,42 +878,36 @@ function buildVE(c){
       {label:'ยอดวิว',data:c.vt,backgroundColor:MB.map(m=>m.color+'55'),borderColor:MB.map(m=>m.color),borderWidth:1,borderRadius:4},
       {label:'Engagement',data:c.et,backgroundColor:MB.map(m=>m.color+'cc'),borderColor:MB.map(m=>m.color),borderWidth:2,borderRadius:4},
     ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fF(c.parsed.y)}`}}},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#8892a4',font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fF(c.parsed.y)}`}}},
       scales:{x:{grid:{color:'#e8ecf4'},ticks:{color:'#1a1d2e',font:{size:12}}},y:{grid:{color:'#e8ecf4'},ticks:{color:'#8892a4',font:{size:11},callback:v=>fN(v)}}}}});
 }
 function buildCmp(){const c=cmp(cd);buildStacked('vsC',cd.views,'vs');buildStacked('esC',cd.eng,'es');buildVE(c);}
 
+// ════ INPUT TABLE ════
 function buildTbl(){
-  const d=cd;
   let h=`<tr><th class="sl" style="min-width:120px">น้อง</th>`;
-  MO_LBL.forEach(mo=>{h+=`<th colspan="2" style="color:var(--ac);background:var(--sf2)">${mo}</th>`;});
-  h+=`<th colspan="2" style="color:var(--ac2);background:var(--sf2)">รวม</th></tr>`;
+  MO_LBL.forEach(mo=>{h+=`<th colspan="2" style="color:var(--ac)">${mo}</th>`;});
+  h+=`<th colspan="2" style="color:var(--ac2)">รวม</th></tr>`;
   h+=`<tr><th class="sl"></th>`;
   MO_LBL.forEach(()=>{h+=`<th style="color:var(--blue);font-size:9px;width:72px">👁 วิว</th><th style="color:var(--ac);font-size:9px;width:72px">❤️ Eng</th>`;});
-  h+=`<th style="color:var(--blue);font-size:9px;min-width:72px">👁 วิว</th><th style="color:var(--ac);font-size:9px;min-width:72px">❤️ Eng</th></tr>`;
+  h+=`<th style="color:var(--blue);font-size:9px">👁 วิว</th><th style="color:var(--ac);font-size:9px">❤️ Eng</th></tr>`;
   document.getElementById('dHead').innerHTML=h;
   let b='';
   for(let i=0;i<M;i++){
-    const m=MB[i],tv=s(d.views[i]),te=s(d.eng[i]);
-    b+=`<tr><td class="sl"><div class="mcell"><div class="mdot" style="background:${m.color}"></div><div><div style="font-weight:500;font-size:12px">${m.name}</div><div style="font-size:10px;color:var(--mu)">${m.handle}</div><span class="tier ${m.tc}" style="font-size:9px">${m.tier}</span></div></div></td>`;
+    const m=MB[i],tv=s(cd.views[i]),te=s(cd.eng[i]);
+    b+=`<tr><td class="sl"><div class="mcell"><div class="mdot" style="background:${m.color}"></div><div><div style="font-weight:500;font-size:12px">${m.name}</div><div style="font-size:10px;color:var(--mu)">${m.ttH}</div><span class="tier ${m.tc}" style="font-size:9px">${m.tier}</span></div></div></td>`;
     for(let j=0;j<MO;j++){
-      b+=`<td><input class="inp iv" id="v_${i}_${j}" type="text" value="${d.views[i][j]||0}" oninput="onI(${i})" onblur="fmt(this)"></td>`;
-      b+=`<td><input class="inp ie" id="e_${i}_${j}" type="text" value="${d.eng[i][j]||0}"   oninput="onI(${i})" onblur="fmt(this)"></td>`;
+      b+=`<td><input class="inp iv" id="v_${i}_${j}" type="text" value="${cd.views[i][j]||0}" oninput="onI(${i})" onblur="fmt(this)"></td>`;
+      b+=`<td><input class="inp ie" id="e_${i}_${j}" type="text" value="${cd.eng[i][j]||0}" oninput="onI(${i})" onblur="fmt(this)"></td>`;
     }
     b+=`<td><span class="tc tcv" id="tv_${i}">${fF(tv)}</span></td><td><span class="tc tce" id="te_${i}">${fF(te)}</span></td></tr>`;
   }
   document.getElementById('dBody').innerHTML=b;
   let f=`<tr><td class="sl" style="font-size:11px;color:var(--mu);padding:8px">รวมทุกคน</td>`;
-  for(let j=0;j<MO;j++){
-    const sv=d.views.reduce((a,r)=>a+r[j],0),se=d.eng.reduce((a,r)=>a+r[j],0);
-    f+=`<td><span class="tc tcv" id="fv_${j}">${fF(sv)}</span></td><td><span class="tc tce" id="fe_${j}">${fF(se)}</span></td>`;
-  }
-  const gtv=d.views.reduce((a,r)=>a+s(r),0),gte=d.eng.reduce((a,r)=>a+s(r),0);
-  f+=`<td><span class="tc tcv">${fF(gtv)}</span></td><td><span class="tc tce">${fF(gte)}</span></td></tr>`;
+  for(let j=0;j<MO;j++){const sv=cd.views.reduce((a,r)=>a+r[j],0),se=cd.eng.reduce((a,r)=>a+r[j],0);f+=`<td><span class="tc tcv" id="fv_${j}">${fF(sv)}</span></td><td><span class="tc tce" id="fe_${j}">${fF(se)}</span></td>`;}
+  f+=`<td><span class="tc tcv">${fF(cd.views.reduce((a,r)=>a+s(r),0))}</span></td><td><span class="tc tce">${fF(cd.eng.reduce((a,r)=>a+s(r),0))}</span></td></tr>`;
   document.getElementById('dFoot').innerHTML=f;
 }
-
 function onI(i){
   let tv=0,te=0;
   for(let j=0;j<MO;j++){
@@ -782,96 +925,66 @@ function onI(i){
 function fmt(el){el.value=parseInt(el.value.replace(/,/g,''))||0;}
 
 function exportCSV(){
-  const d=cd;
-  let csv='น้อง,Handle,Tier';
-  MO_LBL.forEach(m=>{csv+=`,${m} Views,${m} Engagement`;});
-  csv+=',Views รวม,Engagement รวม\n';
-  for(let i=0;i<M;i++){
-    const m=MB[i];csv+=`${m.name},${m.handle},${m.tier}`;
-    for(let j=0;j<MO;j++)csv+=`,${d.views[i][j]},${d.eng[i][j]}`;
-    csv+=`,${s(d.views[i])},${s(d.eng[i])}\n`;
-  }
-  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='NINETIES_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  let csv='น้อง,Handle,Tier';MO_LBL.forEach(m=>{csv+=`,${m} Views,${m} Engagement`;});csv+=',Views รวม,Engagement รวม\n';
+  for(let i=0;i<M;i++){const m=MB[i];csv+=`${m.name},${m.ttH},${m.tier}`;for(let j=0;j<MO;j++)csv+=`,${cd.views[i][j]},${cd.eng[i][j]}`;csv+=`,${s(cd.views[i])},${s(cd.eng[i])}\n`;}
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='NINETIES_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
-// ══ MONTHLY ══
+// ════ MONTHLY ════
 let selMo=0,moMetric='eng';
 function setMoM(m){moMetric=m;document.getElementById('mo-te').classList.toggle('on',m==='eng');document.getElementById('mo-tv').classList.toggle('on',m==='views');buildMonthly();}
 function prevMo(){selMo=Math.max(0,selMo-1);buildMonthly();}
 function nextMo(){selMo=Math.min(MO-1,selMo+1);buildMonthly();}
-
 function buildMoPills(){
-  document.getElementById('moPills').innerHTML=MO_LBL.map((mo,i)=>
-    `<button class="pill" onclick="selMo=${i};buildMonthly()" id="mop_${i}" style="${i===selMo?`border-color:var(--ac);color:var(--ac)`:''}">${mo}</button>`
-  ).join('');
+  document.getElementById('moPills').innerHTML=MO_LBL.map((mo,i)=>`<button class="pill" onclick="selMo=${i};buildMonthly()" id="mop_${i}">${mo}</button>`).join('');
 }
-
 function buildMonthly(){
-  const mx=moMetric==='eng'?cd.eng:cd.views;
-  const moLabel=MO_LBL[selMo];
+  const mx=moMetric==='eng'?cd.eng:cd.views,moLabel=MO_LBL[selMo];
   document.getElementById('mo-label').textContent=moLabel;
-  MO_LBL.forEach((_,i)=>{
-    const p=document.getElementById(`mop_${i}`);if(!p)return;
-    p.style.borderColor=i===selMo?'var(--ac)':'var(--bd)';p.style.color=i===selMo?'var(--ac)':'var(--mu)';
-  });
+  MO_LBL.forEach((_,i)=>{const p=document.getElementById(`mop_${i}`);if(!p)return;p.style.borderColor=i===selMo?'var(--ac)':'var(--bd)';p.style.color=i===selMo?'var(--ac)':'var(--mu)';});
   const vals=MB.map((m,i)=>({...m,i,val:mx[i][selMo]}));
   const ranked=[...vals].sort((a,b)=>b.val-a.val);
-  const total=ranked.reduce((s,m)=>s+m.val,0);
-  const maxVal=Math.max(...vals.map(v=>v.val),1);
+  const total=ranked.reduce((s,m)=>s+m.val,0),maxVal=Math.max(...vals.map(v=>v.val),1);
   const metLabel=moMetric==='eng'?'Engagement':'ยอดวิว';
-  document.getElementById('mo-bar-title').textContent=`📊 ${metLabel} ${moLabel} — จัดอันดับ`;
+  document.getElementById('mo-bar-title').textContent=`📊 ${metLabel} ${moLabel}`;
   document.getElementById('mo-donut-title').textContent=`🥧 สัดส่วน ${metLabel} ${moLabel}`;
   document.getElementById('mo-mom-title').textContent=`📅 เทียบกับเดือนก่อน (${selMo>0?MO_LBL[selMo-1]:'—'} → ${moLabel})`;
-  const topMember=ranked[0];const activeCount=ranked.filter(m=>m.val>0).length;
+  const topMember=ranked[0],ac=ranked.filter(m=>m.val>0).length;
   document.getElementById('moCards').innerHTML=[
-    {lb:`${metLabel} รวม${moLabel}`,v:fF(total),sub:`${activeCount} คนมีข้อมูล`,cl:'ce'},
-    {lb:'อันดับ 1 เดือนนี้',v:topMember.val>0?topMember.name:'—',sub:topMember.val>0?fF(topMember.val)+' '+metLabel:'ยังไม่มีข้อมูล',cl:'cv'},
+    {lb:`${metLabel} รวม`,v:fF(total),sub:`${ac} คนมีข้อมูล`,cl:'ce'},
+    {lb:'อันดับ 1',v:topMember.val>0?topMember.name:'—',sub:topMember.val>0?fF(topMember.val)+' '+metLabel:'ยังไม่มีข้อมูล',cl:'cv'},
     {lb:'สัดส่วนสูงสุด',v:topMember.val>0&&total>0?((topMember.val/total*100).toFixed(1)+'%'):'—',sub:topMember.val>0?topMember.name:'',cl:'cg'},
-    {lb:'ค่าเฉลี่ยต่อคน',v:fN(Math.round(total/MB.length)),sub:`จาก ${MB.length} คน`,cl:'cg2'},
+    {lb:'เฉลี่ยต่อคน',v:fN(Math.round(total/M)),sub:`จาก ${M} คน`,cl:'cg2'},
   ].map(x=>`<div class="mc ${x.cl}"><div class="mc-lb">${x.lb}</div><div class="mc-v">${x.v}</div><div class="mc-sub">${x.sub}</div></div>`).join('');
-
-  const rnkClass=['rank-1','rank-2','rank-3','rank-n','rank-n','rank-n','rank-n'];
-  const rnkNumCls=['mo-rank-1','mo-rank-2','mo-rank-3','mo-rank-n','mo-rank-n','mo-rank-n','mo-rank-n'];
-  const rnkEmoji=['🥇','🥈','🥉','4','5','6','7'];
-  document.getElementById('moRankCards').innerHTML=ranked.map((m,ri)=>{
-    const pct=(m.val/maxVal*100).toFixed(1);const pctOfTotal=total>0?(m.val/total*100).toFixed(1)+'%':'0%';
-    return`<div class="mo-card ${rnkClass[ri]}">
-      <div class="mo-rank-num ${rnkNumCls[ri]}">${rnkEmoji[ri]}</div>
-      <div class="mo-card-info">
-        <div class="mo-card-name" style="color:${m.color}">${m.name}</div>
-        <div class="mo-card-val" style="color:${m.color}">${fF(m.val)}</div>
-        <div class="mo-card-sub">${metLabel} · ${pctOfTotal} ของรวม</div>
-      </div>
-      <div class="mo-card-bar"><div class="mo-card-bar-fill" style="width:${pct}%;background:${m.color}"></div></div>
-    </div>`;
-  }).join('');
-
+  const rnkC=['rank-1','rank-2','rank-3','rank-n','rank-n','rank-n','rank-n'];
+  const rnkNC=['mo-rank-1','mo-rank-2','mo-rank-3','mo-rank-n','mo-rank-n','mo-rank-n','mo-rank-n'];
+  const em=['🥇','🥈','🥉','4','5','6','7'];
+  document.getElementById('moRankCards').innerHTML=ranked.map((m,ri)=>`<div class="mo-card ${rnkC[ri]}">
+    <div class="mo-rank-num ${rnkNC[ri]}">${em[ri]}</div>
+    <div class="mo-card-info"><div class="mo-card-name" style="color:${m.color}">${m.name}</div>
+    <div class="mo-card-val" style="color:${m.color}">${fF(m.val)}</div>
+    <div class="mo-card-sub">${metLabel} · ${total>0?(m.val/total*100).toFixed(1):'0'}% ของรวม</div></div>
+    <div class="mo-card-bar"><div class="mo-card-bar-fill" style="width:${(m.val/maxVal*100).toFixed(1)}%;background:${m.color}"></div></div>
+  </div>`).join('');
   if(Ch.moBar)Ch.moBar.destroy();
   Ch.moBar=new Chart(document.getElementById('moBarC').getContext('2d'),{type:'bar',
     data:{labels:ranked.map(m=>m.name),datasets:[{data:ranked.map(m=>m.val),backgroundColor:ranked.map(m=>m.color+'99'),borderColor:ranked.map(m=>m.color),borderWidth:1,borderRadius:6}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${fF(c.parsed.x)}`}}},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${fF(c.parsed.x)}`}}},
       scales:{x:{grid:{color:'#e8ecf4'},ticks:{color:'#8892a4',font:{size:10},callback:v=>fN(v)}},y:{grid:{color:'transparent'},ticks:{color:'#1a1d2e',font:{size:12}}}}}});
-
   if(Ch.moDnt)Ch.moDnt.destroy();
-  const hasData=ranked.some(m=>m.val>0);
+  const hasD=ranked.some(m=>m.val>0);
   Ch.moDnt=new Chart(document.getElementById('moDonutC').getContext('2d'),{type:'doughnut',
-    data:{labels:ranked.map(m=>m.name),datasets:[{data:hasData?ranked.map(m=>m.val):MB.map(()=>1),backgroundColor:hasData?ranked.map(m=>m.color+'cc'):MB.map(()=>'#e8ecf4'),borderColor:hasData?ranked.map(m=>m.color):MB.map(()=>'#d1d9e8'),borderWidth:2,hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:11},boxWidth:10,padding:8}},
-        tooltip:{callbacks:{label:c=>{if(!hasData)return' ยังไม่มีข้อมูล';const v=c.parsed;const pct=total>0?(v/total*100).toFixed(1):'0';return` ${c.label}: ${fF(v)} (${pct}%)`;}}}}
-      ,cutout:'55%'}});
-
+    data:{labels:ranked.map(m=>m.name),datasets:[{data:hasD?ranked.map(m=>m.val):MB.map(()=>1),backgroundColor:hasD?ranked.map(m=>m.color+'cc'):MB.map(()=>'#e8ecf4'),borderColor:hasD?ranked.map(m=>m.color):MB.map(()=>'#d1d9e8'),borderWidth:2,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{color:'#8892a4',font:{size:11},boxWidth:10}},
+      tooltip:{callbacks:{label:c=>{if(!hasD)return' ยังไม่มีข้อมูล';const v=c.parsed;return` ${c.label}: ${fF(v)} (${total>0?(v/total*100).toFixed(1):'0'}%)`;}}}},cutout:'55%'}});
   const prevMx=selMo>0?(moMetric==='eng'?cd.eng:cd.views):null;
   document.getElementById('moMoM').innerHTML=MB.map((m,i)=>{
-    const cur=mx[i][selMo];const prev=prevMx&&selMo>0?prevMx[i][selMo-1]:null;
-    let deltaHTML='';
-    if(prev!==null){const diff=cur-prev;const pct=prev>0?((diff/prev)*100).toFixed(1):null;const cls=diff>0?'delta-up':diff<0?'delta-dn':'delta-eq';const arrow=diff>0?'↑':diff<0?'↓':'—';deltaHTML=`<div class="mom-delta"><span class="${cls}">${arrow} ${fF(Math.abs(diff))}${pct!==null?' ('+pct+'%)':''}</span></div>`;}
-    else{deltaHTML=`<div class="mom-delta"><span class="delta-eq">— ไม่มีเดือนก่อน</span></div>`;}
-    return`<div class="mom-card"><div class="mom-name"><div class="mdot" style="background:${m.color};width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>${m.name} <span class="tier ${m.tc}" style="font-size:9px">${m.tier}</span></div>
-    <div class="mom-val" style="color:${m.color}">${fF(cur)}</div>${deltaHTML}
+    const cur=mx[i][selMo],prev=prevMx&&selMo>0?prevMx[i][selMo-1]:null;
+    let dH='';
+    if(prev!==null){const diff=cur-prev,pct=prev>0?((diff/prev)*100).toFixed(1):null,cls=diff>0?'delta-up':diff<0?'delta-dn':'delta-eq',ar=diff>0?'↑':diff<0?'↓':'—';dH=`<div class="mom-delta"><span class="${cls}">${ar} ${fF(Math.abs(diff))}${pct?` (${pct}%)`:''}</span></div>`;}
+    else dH=`<div class="mom-delta"><span class="delta-eq">— ไม่มีเดือนก่อน</span></div>`;
+    return`<div class="mom-card"><div class="mom-name"><div class="mdot" style="background:${m.color};width:8px;height:8px;border-radius:50%;flex-shrink:0"></div>${m.name}</div>
+    <div class="mom-val" style="color:${m.color}">${fF(cur)}</div>${dH}
     ${prev!==null?`<div style="font-size:10px;color:var(--mu);margin-top:2px">เดือนก่อน: ${fF(prev)}</div>`:''}</div>`;
   }).join('');
 }
@@ -881,7 +994,7 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 function refreshAll(){
   const c=cmp(cd);
   buildMC(c);buildLeg();buildTrend();buildRkTbl(c);buildRkBar(c);buildCmp();
-  buildMoPills();buildMonthly();buildFolTables();buildRange();
+  buildMoPills();buildMonthly();buildFolTables();buildRange();buildGrowthTargets();
 }
 
 function switchTab(name,el){
@@ -892,13 +1005,19 @@ function switchTab(name,el){
   if(name==='monthly'){buildMoPills();buildMonthly();}
   if(name==='followers')buildFolTables();
   if(name==='range')buildRange();
+  if(name==='growth')buildGrowthTargets();
+  if(name==='monthly_entry'){buildEntryPills();buildEntryTable();}
 }
 
-// ══ INIT ══
-buildTbl();
+// ════ INIT ════
+buildTbl();buildEntryPills();buildEntryTable();
 refreshAll();
-checkSetup();
 
+// Check sync setup
+if(hasCfg()){setSS('ok','เชื่อมต่อแล้ว');doLoad();}
+else{setSS('','Local');document.getElementById('setupModal').style.display='flex';}
+
+// Auto-refresh every minute if synced
 setInterval(()=>{if(hasCfg())doLoad();},60000);
 </script>
 </body>
