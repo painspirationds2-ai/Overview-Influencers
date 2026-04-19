@@ -223,6 +223,7 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
     <button class="btn" onclick="exportCSV()">⬇ Export</button>
     <button class="btn pr" onclick="doSave()">💾 บันทึก</button>
     <button class="btn sc" onclick="doLoad()">🔄 รีเฟรช</button>
+    <button class="btn" onclick="hardReset()" title="ล้าง Cache เบราว์เซอร์ทั้งหมด">🗑 ล้าง Cache</button>
     <button class="btn" onclick="openSettings()">⚙️</button>
   </div>
 </div>
@@ -259,6 +260,7 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
 <div class="page" id="page-monthly_entry">
   <div class="info">
     <strong>📝 กรอกยอดรายเดือน</strong> — กรอกข้อมูลรายคนรายเดือน IG + TikTok · <code>💾 บันทึก</code> เพื่อ sync ให้ทุกคนเห็น
+    <br><span style="color:#065f46;font-weight:600">📌 มี.ค. 69 = Baseline (ก่อนทำงานกับ NINETIES)</span> — กรอกยอดจริงเดือนมีนาคมไว้เพื่อใช้เปรียบเทียบการเติบโตในเดือนถัดไป
   </div>
 
   <!-- Month selector -->
@@ -289,39 +291,44 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
   </div>
 
   <div class="stitle" style="margin-top:1.25rem">มาตรฐาน KPI แยก Tier</div>
+
+  <!-- WHY explanation -->
+  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;font-size:12px;color:#92400e;margin-bottom:1.25rem;line-height:1.9">
+    <strong>💡 ทำไมเป้า Follower ถึงคิดเป็น "ตัวเลขจริง" ไม่ใช่ %?</strong><br>
+    Tier 1 (50K) มี base น้อย — ถ้าคิดเป็น % เหมือน Tier 2 จะโหดเกินไป เช่น 3% ของ 70K = เพิ่ม 2,100 คน แต่ 3% ของ 16K = แค่ 480 คน ซึ่ง achievable ต่างกัน
+    ดังนั้นจึงตั้งเป็น "จำนวนคนจริง" ที่สมเหตุสมผลตาม size ของแต่ละ Tier แทน
+  </div>
+
   <div class="grid3">
     <div class="tier-card">
       <div class="tier-card-title"><span class="tier t1">Tier 1</span> 50,000+ followers</div>
-      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">3–5%</span></div>
-      <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 15%</span></div>
-      <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 10%</span></div>
-      <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 5.0%</span></div>
-      <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 6.0%</span></div>
-      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 2,000</span></div>
-      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">1.5–2.5%</span></div>
-      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · โตเร็วได้เพราะ base เล็ก</div>
-    </div>
-    <div class="tier-card">
-      <div class="tier-card-title"><span class="tier t2">Tier 2</span> 100,000+ followers</div>
-      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">2–3%</span></div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม/เดือน</span><span class="kpi-val" style="color:#065f46">+500–1,500 คน</span></div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">+250–750 คน</span></div>
       <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 10%</span></div>
       <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 7%</span></div>
       <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 3.0%</span></div>
       <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 4.0%</span></div>
-      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 10,000</span></div>
-      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">1–1.5%</span></div>
-      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · ช่วง build loyal audience</div>
+      <div class="growth-note">ตัวเลข Fol เป็น "คนจริง" ที่สมเหตุสมผล · Eng/Views เป้าเท่า Tier 2 เพราะ content quality สำคัญกว่า base size</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-card-title"><span class="tier t2">Tier 2</span> 100,000+ followers</div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม/เดือน</span><span class="kpi-val" style="color:#065f46">+2,000–4,000 คน</span></div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">+1,000–2,000 คน</span></div>
+      <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 10%</span></div>
+      <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 7%</span></div>
+      <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 3.0%</span></div>
+      <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 4.0%</span></div>
+      <div class="growth-note">Base ใหญ่กว่า → ตัวเลขจริงสูงกว่า · ช่วง build loyal audience · เป้า % เท่า Tier 1</div>
     </div>
     <div class="tier-card">
       <div class="tier-card-title"><span class="tier t3">Tier 3</span> 300,000+ followers</div>
-      <div class="kpi-row"><span class="kpi-label">👥 Fol โต/เดือน</span><span class="kpi-val" style="color:#065f46">1–2%</span></div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม/เดือน</span><span class="kpi-val" style="color:#065f46">+3,000–6,000 คน</span></div>
+      <div class="kpi-row"><span class="kpi-label">👥 Fol เพิ่ม ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">+1,500–3,000 คน</span></div>
       <div class="kpi-row"><span class="kpi-label">👁 Views โต/เดือน</span><span class="kpi-val" style="color:#0984e3">≥ 7%</span></div>
       <div class="kpi-row"><span class="kpi-label">❤️ Eng โต/เดือน</span><span class="kpi-val" style="color:#6c5ce7">≥ 5%</span></div>
       <div class="kpi-row"><span class="kpi-label">IG ER% เป้า</span><span class="kpi-val" style="color:#9d174d">≥ 1.5%</span></div>
       <div class="kpi-row"><span class="kpi-label">TT ER% เป้า</span><span class="kpi-val" style="color:#9f1239">≥ 2.5%</span></div>
-      <div class="kpi-row"><span class="kpi-label">TT Views/โพสต์</span><span class="kpi-val">≥ 50,000</span></div>
-      <div class="kpi-row"><span class="kpi-label">📅 Fol ครึ่งเดือน</span><span class="kpi-val" style="color:#6c5ce7">0.5–1%</span></div>
-      <div class="growth-note">เป้า Eng ครึ่งเดือน ≥ 50% ของเป้ารายเดือน · % น้อยลงแต่ตัวเลขจริงสูง</div>
+      <div class="growth-note">Base ใหญ่มาก → % โตช้าลงตามธรรมชาติ แต่ตัวเลขจริงสูงสุด · Eng% ลดลงเล็กน้อย</div>
     </div>
   </div>
 
@@ -468,16 +475,27 @@ const MB = [
    ig_fol:1502,   tt_fol:70983,  ig_er:2.39,  tt_er:2.55,  ig_views:141399,   tt_views:360000},
 ];
 
-// Tier growth targets
+// Tier growth targets — สมเหตุสมผลตามขนาด base จริง
+// Tier 1 (50K) โตช้ากว่าเป็นตัวเลขจริง แต่ % อาจดูเยอะเพราะ base เล็ก
+// ใช้ flat_fol_mo = จำนวนคนจริงที่ควรเพิ่ม (สำคัญกว่า %)
 const TIER_CFG = {
-  'Tier 1': { fol_mo:[3,5], fol_half:[1.5,2.5], views_mo:15, eng_mo:10, tt_er_min:6.0, ig_er_min:5.0 },
-  'Tier 2': { fol_mo:[2,3], fol_half:[1.0,1.5], views_mo:10, eng_mo:7,  tt_er_min:4.0, ig_er_min:3.0 },
-  'Tier 3': { fol_mo:[1,2], fol_half:[0.5,1.0], views_mo:7,  eng_mo:5,  tt_er_min:2.5, ig_er_min:1.5 },
+  // Tier 1: Nano 50K+ → เพิ่ม ~500–1,500 คน/เดือน (ไม่ใช่ % สูงๆ)
+  'Tier 1': { fol_mo:[1,2], fol_half:[0.5,1], flat_fol_mo:[500,1500], flat_fol_half:[250,750],
+              views_mo:10, eng_mo:7, tt_er_min:4.0, ig_er_min:3.0,
+              note:'Nano 50K+ · เพิ่ม ~500–1,500 คน/เดือน · Views โต 10%+' },
+  // Tier 2: Micro 100K+ → เพิ่ม ~2,000–4,000 คน/เดือน
+  'Tier 2': { fol_mo:[2,3], fol_half:[1,1.5], flat_fol_mo:[2000,4000], flat_fol_half:[1000,2000],
+              views_mo:10, eng_mo:7, tt_er_min:4.0, ig_er_min:3.0,
+              note:'Micro 100K+ · เพิ่ม ~2,000–4,000 คน/เดือน · Views โต 10%+' },
+  // Tier 3: Mid 300K+ → เพิ่ม ~3,000–6,000 คน/เดือน
+  'Tier 3': { fol_mo:[1,2], fol_half:[0.5,1], flat_fol_mo:[3000,6000], flat_fol_half:[1500,3000],
+              views_mo:7,  eng_mo:5, tt_er_min:2.5, ig_er_min:1.5,
+              note:'Mid 300K+ · เพิ่ม ~3,000–6,000 คน/เดือน · % น้อยลงแต่ตัวเลขจริงสูง' },
 };
 
 const MO_LBL = ['ธ.ค. 68','ม.ค. 69','ก.พ. 69','มี.ค. 69','เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69','ต.ค. 69','พ.ย. 69','ธ.ค. 69'];
-// Entry months start from เม.ย. 69
-const ENTRY_MO = ['เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69'];
+// Entry months — มี.ค. 69 = baseline ก่อนทำงานกับ NINETIES
+const ENTRY_MO = ['มี.ค. 69','เม.ย. 69','พ.ค. 69','มิ.ย. 69','ก.ค. 69','ส.ค. 69','ก.ย. 69'];
 const M = MB.length, MO = MO_LBL.length;
 
 const DEF = {
@@ -514,15 +532,50 @@ async function remoteSave(data){
 }
 
 // ════ DATA ════
-function localLoad(){
-  const s=localStorage.getItem('n9_v5');
-  if(s){try{const d=JSON.parse(s);
-    if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);
-    if(!d.channel)d.channel=DEF.channel.map(m=>m.map(mo=>({...mo})));
-    return d;}catch(e){}}
-  return{views:DEF.views.map(r=>[...r]),eng:DEF.eng.map(r=>[...r]),fol:DEF.fol.map(r=>[...r]),channel:DEF.channel.map(m=>m.map(mo=>({...mo})))};
+const EMPTY_MONTH = {ig_fol:0,ig_views:0,ig_likes:0,ig_comments:0,ig_saves:0,ig_shares:0,ig_new_fol:0,ig_er:0,tt_fol:0,tt_post_views:0,tt_profile_views:0,tt_likes:0,tt_comments:0,tt_shares:0,tt_er:0};
+const STORAGE_KEY = 'n9_v7'; // เปลี่ยน key ใหม่ทุกครั้งที่ ENTRY_MO เปลี่ยน
+
+function fixChannel(ch){
+  // ให้มั่นใจว่า channel ทุก member มีครบ ENTRY_MO.length เดือนเสมอ
+  return MB.map((m,i)=>{
+    const existing = (ch && ch[i]) ? ch[i] : [];
+    if(existing.length === ENTRY_MO.length) return existing;
+    // เติม empty เดือนให้ครบ (prepend ถ้าน้อยกว่า)
+    const pad = ENTRY_MO.length - existing.length;
+    if(pad > 0) return [...Array(pad).fill(null).map(()=>({...EMPTY_MONTH})), ...existing];
+    return existing.slice(0, ENTRY_MO.length);
+  });
 }
-function localSave(d){localStorage.setItem('n9_v5',JSON.stringify(d));}
+
+function localLoad(){
+  const s = localStorage.getItem(STORAGE_KEY);
+  if(s){
+    try{
+      const d = JSON.parse(s);
+      if(!d.fol) d.fol = DEF.fol.map(r=>[...r]);
+      d.channel = fixChannel(d.channel);
+      return d;
+    }catch(e){}
+  }
+  // ลอง migrate จาก version เก่า
+  const old = localStorage.getItem('n9_v6') || localStorage.getItem('n9_v5');
+  if(old){
+    try{
+      const d = JSON.parse(old);
+      if(!d.fol) d.fol = DEF.fol.map(r=>[...r]);
+      d.channel = fixChannel(d.channel);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+      return d;
+    }catch(e){}
+  }
+  return{
+    views: DEF.views.map(r=>[...r]),
+    eng:   DEF.eng.map(r=>[...r]),
+    fol:   DEF.fol.map(r=>[...r]),
+    channel: MB.map(()=>ENTRY_MO.map(()=>({...EMPTY_MONTH})))
+  };
+}
+function localSave(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
 
 function readInps(){
   const d={views:[],eng:[]};
@@ -631,8 +684,17 @@ function buildEntryTable(){
   document.getElementById('entry-mo-label').textContent=ENTRY_MO[entryMo];
   ENTRY_MO.forEach((_,i)=>{const p=document.getElementById(`emp_${i}`);if(!p)return;p.style.borderColor=i===entryMo?'var(--ac)':'var(--bd)';p.style.color=i===entryMo?'var(--ac)':'var(--mu)';});
 
+  const isBaseline = entryMo === 0; // มี.ค. 69 = baseline
   const ch = cd.channel||DEF.channel.map(m=>m.map(mo=>({...mo})));
-  document.getElementById('entryCards').innerHTML = MB.map((m,i)=>{
+  document.getElementById('entryCards').innerHTML = (isBaseline ? `
+    <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:12px 16px;font-size:12px;color:#166534;margin-bottom:1rem;display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:18px;flex-shrink:0">📌</span>
+      <div>
+        <strong>มีนาคม 69 = Baseline ก่อนทำงานกับ NINETIES</strong><br>
+        กรอกยอดจริงของน้องแต่ละคนก่อนเริ่มต้นทำงาน เพื่อใช้เปรียบเทียบการเติบโตในเดือนถัดไป
+        <div style="margin-top:6px"><button class="btn" style="font-size:11px;padding:4px 10px" onclick="prefillBaseline()">⚡ Auto-fill จาก Baseline Data</button></div>
+      </div>
+    </div>` : '') + MB.map((m,i)=>{
     const d = ch[i][entryMo];
     const prevD = entryMo > 0 ? ch[i][entryMo-1] : null;
     const igGrowth = prevD && prevD.ig_fol > 0 ? ((d.ig_fol - prevD.ig_fol)/prevD.ig_fol*100).toFixed(1) : null;
@@ -665,8 +727,8 @@ function buildEntryTable(){
           <div style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px">
             <div style="font-size:11px;color:var(--mu);margin-bottom:4px">IG ER% (คำนวณอัตโนมัติ)</div>
             <div class="mc-v" id="live_ig_er_${i}_${entryMo}" style="font-size:18px;color:#9d174d">${d.ig_er?.toFixed(2)||'0.00'}%</div>
-            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.ig_er_min}% · ${d.ig_er>=T.ig_er_min?'<span class="badge badge-ok">✓ ผ่านเป้า</span>':'<span class="badge badge-bad">ต่ำกว่าเป้า</span>'}</div>
-            ${igGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(igGrowth)>=T.fol_mo[0]?'delta-up':'delta-dn'}">${igGrowth>0?'+':''}${igGrowth}%</span> (เป้า +${T.fol_mo[0]}%)</div>`:''}
+            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.ig_er_min}% · <span class="${d.ig_er>=T.ig_er_min?'badge badge-ok':'badge badge-bad'}">${d.ig_er>=T.ig_er_min?'✓ ผ่านเป้า':'ต่ำกว่าเป้า'}</span></div>
+            ${igGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(igGrowth)>0?'delta-up':'delta-dn'}">${igGrowth>0?'+':''}${igGrowth}%</span> · เป้า Tier: +${T.flat_fol_mo[0].toLocaleString()}–${T.flat_fol_mo[1].toLocaleString()} คน/เดือน</div>`:''}
           </div>
         </div>
         <!-- TikTok -->
@@ -683,13 +745,40 @@ function buildEntryTable(){
           <div style="margin-top:10px;padding:10px;background:var(--sf2);border-radius:8px">
             <div style="font-size:11px;color:var(--mu);margin-bottom:4px">TT ER% (คำนวณอัตโนมัติ)</div>
             <div class="mc-v" id="live_tt_er_${i}_${entryMo}" style="font-size:18px;color:#9f1239">${d.tt_er?.toFixed(2)||'0.00'}%</div>
-            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.tt_er_min}% · ${d.tt_er>=T.tt_er_min?'<span class="badge badge-ok">✓ ผ่านเป้า</span>':'<span class="badge badge-bad">ต่ำกว่าเป้า</span>'}</div>
-            ${ttGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(ttGrowth)>=T.fol_mo[0]?'delta-up':'delta-dn'}">${ttGrowth>0?'+':''}${ttGrowth}%</span> (เป้า +${T.fol_mo[0]}%)</div>`:''}
+            <div style="font-size:10px;color:var(--mu);margin-top:3px">เป้า Tier ${m.tier}: ≥${T.tt_er_min}% · <span class="${d.tt_er>=T.tt_er_min?'badge badge-ok':'badge badge-bad'}">${d.tt_er>=T.tt_er_min?'✓ ผ่านเป้า':'ต่ำกว่าเป้า'}</span></div>
+            ${ttGrowth!==null?`<div style="font-size:11px;margin-top:4px">Fol เพิ่ม: <span class="${parseFloat(ttGrowth)>0?'delta-up':'delta-dn'}">${ttGrowth>0?'+':''}${ttGrowth}%</span> · เป้า Tier: +${T.flat_fol_mo[0].toLocaleString()}–${T.flat_fol_mo[1].toLocaleString()} คน/เดือน</div>`:''}
           </div>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+// Pre-fill March baseline from actual Excel data
+function prefillBaseline(){
+  if(!confirm('Auto-fill ยอด Baseline มี.ค. 69 จากข้อมูลจริง Excel?\n(จะแทนที่ค่าที่กรอกไว้)')) return;
+  const BASELINE = [
+    // ig_fol, ig_views, ig_likes, ig_comments, ig_saves, ig_shares, ig_new_fol,
+    // tt_fol, tt_post_views, tt_profile_views, tt_likes, tt_comments, tt_shares
+    [104000, 14608028, 0, 0, 0, 0, 0,  16400,  1100000, 0, 0, 0, 0],  // ยูริน
+    [8833,   93900,    0, 0, 0, 0, 0, 129700,   874000, 0, 0, 0, 0],  // เฟิร์ส
+    [115000, 800000,   0, 0, 0, 0, 0, 232200,    45000, 0, 0, 0, 0],  // เวียร์
+    [10852,  103152,   0, 0, 0, 0, 0, 119011,   283000, 0, 0, 0, 0],  // เนม
+    [8566,   23600,    0, 0, 0, 0, 0, 133346,   231000, 0, 0, 0, 0],  // เอมมี่
+    [11810,  128260,   0, 0, 0, 0, 0,  70132,   134000, 0, 0, 0, 0],  // พราว
+    [1502,   141399,   0, 0, 0, 0, 0,  70983,   360000, 0, 0, 0, 0],  // อินดี้
+  ];
+  const fields = ['ig_fol','ig_views','ig_likes','ig_comments','ig_saves','ig_shares','ig_new_fol',
+                  'tt_fol','tt_post_views','tt_profile_views','tt_likes','tt_comments','tt_shares'];
+  MB.forEach((m, mi) => {
+    const vals = BASELINE[mi];
+    fields.forEach((f, fi) => {
+      const el = document.getElementById(`ch_${mi}_0_${f}`);
+      if(el) el.value = vals[fi];
+    });
+    liveER(mi, 0);
+  });
+  showToast('Auto-fill Baseline มี.ค. 69 แล้ว · กด 💾 บันทึก เพื่อเซฟ');
 }
 
 function liveER(mi, moi){
@@ -717,8 +806,9 @@ function saveEntry(){doSave();}
 function buildGrowthTargets(){
   document.getElementById('memberTargetBody').innerHTML = MB.map((m,i)=>{
     const T = TIER_CFG[m.tier];
-    const ttFolAdd = Math.round(m.tt_fol * T.fol_mo[0] / 100);
-    const ttFolHalf = Math.round(m.tt_fol * T.fol_half[0] / 100);
+    // Use flat absolute numbers (สมเหตุสมผลกว่า %)
+    const folMo  = `+${fF(T.flat_fol_mo[0])}–${fF(T.flat_fol_mo[1])} คน`;
+    const folHalf = `+${fF(T.flat_fol_half[0])}–${fF(T.flat_fol_half[1])} คน`;
     const ttErTgt = Math.min(m.tt_er * 1.05, 30).toFixed(2);
     const igErTgt = Math.min(m.ig_er * 1.05, 25).toFixed(2);
     const ttErOk = m.tt_er >= T.tt_er_min;
@@ -728,8 +818,8 @@ function buildGrowthTargets(){
       <td><span class="tier ${m.tc}">${m.tier}</span></td>
       <td style="font-family:'IBM Plex Mono',monospace">${fF(m.ig_fol)}</td>
       <td style="font-family:'IBM Plex Mono',monospace">${fF(m.tt_fol)}</td>
-      <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">+${fF(ttFolAdd)} คน</td>
-      <td style="font-family:'IBM Plex Mono',monospace;color:#6c5ce7;font-weight:700">+${fF(ttFolHalf)} คน</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">${folMo}</td>
+      <td style="font-family:'IBM Plex Mono',monospace;color:#6c5ce7;font-weight:700">${folHalf}</td>
       <td style="font-family:'IBM Plex Mono',monospace" class="${ttErOk?'er-good':'er-bad'}">${m.tt_er}%</td>
       <td style="font-family:'IBM Plex Mono',monospace;color:#059669;font-weight:700">≥${ttErTgt}%</td>
       <td style="font-family:'IBM Plex Mono',monospace" class="${igErOk?'er-good':'er-bad'}">${m.ig_er}%</td>
@@ -991,6 +1081,13 @@ function buildMonthly(){
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
+// ล้าง cache เก่าทั้งหมดและรีโหลด
+function hardReset(){
+  if(!confirm('ล้าง Cache เบราว์เซอร์ทั้งหมด?\n(ข้อมูลที่กรอกไว้ใน Local จะหาย แต่ข้อมูลใน Cloud ยังอยู่)')) return;
+  ['n9_v5','n9_v6','n9_v7','n9_v4'].forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+
 function refreshAll(){
   const c=cmp(cd);
   buildMC(c);buildLeg();buildTrend();buildRkTbl(c);buildRkBar(c);buildCmp();
@@ -1010,6 +1107,9 @@ function switchTab(name,el){
 }
 
 // ════ INIT ════
+// ล้าง key เก่าทุกครั้งที่โหลด เพื่อไม่ให้ cache เก่าบัง มีนาคม
+['n9_v4','n9_v5','n9_v6'].forEach(k=>localStorage.removeItem(k));
+
 buildTbl();buildEntryPills();buildEntryTable();
 refreshAll();
 
@@ -1017,8 +1117,15 @@ refreshAll();
 if(hasCfg()){setSS('ok','เชื่อมต่อแล้ว');doLoad();}
 else{setSS('','Local');document.getElementById('setupModal').style.display='flex';}
 
-// Auto-refresh every minute if synced
-setInterval(()=>{if(hasCfg())doLoad();},60000);
+// Auto-save ทุก 60 วินาที (บันทึก local + sync cloud)
+setInterval(()=>{
+  const d = readInps(); d.fol = cd.fol; d.channel = readChannelInps();
+  localSave(d); cd = d;
+  if(hasCfg()) remoteSave(d);
+}, 60000);
+
+// Auto-refresh (ดึงข้อมูลล่าสุดจาก cloud) ทุก 1 ชั่วโมง
+setInterval(()=>{if(hasCfg())doLoad();}, 3600000);
 </script>
 </body>
 </html>
