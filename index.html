@@ -234,7 +234,7 @@ body{background:var(--bg);color:var(--tx);font-family:'IBM Plex Sans Thai',sans-
   <div class="tab" onclick="switchTab('growth',this)">📈 เป้าการเติบโต</div>
   <div class="tab" onclick="switchTab('ranking',this)">🏆 Ranking</div>
   <div class="tab" onclick="switchTab('followers',this)">👥 Followers</div>
-  <div class="tab" onclick="switchTab('range',this)">🎯 Range ครึ่งเดือน</div>
+  <div class="tab" onclick="switchTab('range',this)">🎯 Range รายเดือน</div>
   <div class="tab" onclick="switchTab('compare',this)">📊 เปรียบเทียบ</div>
   <div class="tab" onclick="switchTab('monthly',this)">🗓 รายเดือน</div>
   <div class="tab" onclick="switchTab('input',this)">✏️ Eng/Views Input</div>
@@ -560,6 +560,7 @@ function localLoad(){
       const d = JSON.parse(s);
       if(!d.fol) d.fol = DEF.fol.map(r=>[...r]);
       d.channel = fixChannel(d.channel);
+      if(!d.rangeData) d.rangeData = MB.map(()=>ENTRY_MO.map(()=>({eng_target:0,views_target:0,eng_mid:0,views_mid:0})));
       return d;
     }catch(e){}
   }
@@ -570,6 +571,7 @@ function localLoad(){
       const d = JSON.parse(old);
       if(!d.fol) d.fol = DEF.fol.map(r=>[...r]);
       d.channel = fixChannel(d.channel);
+      if(!d.rangeData) d.rangeData = MB.map(()=>ENTRY_MO.map(()=>({eng_target:0,views_target:0,eng_mid:0,views_mid:0})));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
       return d;
     }catch(e){}
@@ -578,7 +580,8 @@ function localLoad(){
     views: DEF.views.map(r=>[...r]),
     eng:   DEF.eng.map(r=>[...r]),
     fol:   DEF.fol.map(r=>[...r]),
-    channel: MB.map(()=>ENTRY_MO.map(()=>({...EMPTY_MONTH})))
+    channel: MB.map(()=>ENTRY_MO.map(()=>({...EMPTY_MONTH}))),
+    rangeData: MB.map(()=>ENTRY_MO.map(()=>({eng_target:0,views_target:0,eng_mid:0,views_mid:0})))
   };
 }
 function localSave(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
@@ -609,7 +612,10 @@ function readChannelInps(){
 }
 
 async function doSave(){
-  const d=readInps();d.fol=cd.fol;d.channel=readChannelInps();
+  const d=readInps();
+  d.fol=cd.fol;
+  d.channel=readChannelInps();
+  d.rangeData=readRangeInps();
   localSave(d);cd=d;
   const ok=await remoteSave(d);
   showToast(ok?'บันทึก + Sync แล้ว ✓':'บันทึก Local แล้ว (Sync ไม่สำเร็จ)');
@@ -617,8 +623,15 @@ async function doSave(){
 }
 async function doLoad(){
   let d=await remoteLoad();
-  if(d&&d.views){if(!d.fol)d.fol=DEF.fol.map(r=>[...r]);if(!d.channel)d.channel=DEF.channel.map(m=>m.map(mo=>({...mo})));localSave(d);cd=d;showToast('โหลดข้อมูลล่าสุดแล้ว ✓');}
-  else{cd=localLoad();if(!hasCfg())showToast('ใช้ข้อมูล Local');}
+  if(d&&d.views){
+    if(!d.fol) d.fol=DEF.fol.map(r=>[...r]);
+    if(!d.channel) d.channel=DEF.channel.map(m=>m.map(()=>({...EMPTY_MONTH})));
+    if(!d.rangeData) d.rangeData=MB.map(()=>ENTRY_MO.map(()=>({eng_target:0,views_target:0,eng_mid:0,views_mid:0})));
+    localSave(d);cd=d;showToast('โหลดข้อมูลล่าสุดแล้ว ✓');
+  }else{
+    cd=localLoad();
+    if(!hasCfg())showToast('ใช้ข้อมูล Local');
+  }
   buildTbl();buildEntryTable();buildFolTables();buildRange();refreshAll();
 }
 function clearAll(){localStorage.removeItem('n9_v5');cd=localLoad();buildTbl();buildEntryTable();buildFolTables();buildRange();refreshAll();showToast('ล้างข้อมูลแล้ว');}
@@ -1232,8 +1245,6 @@ function switchTab(name,el){
 }
 
 // ════ INIT ════
-// ล้าง key เก่าทุกครั้งที่โหลด เพื่อไม่ให้ cache เก่าบัง มีนาคม
-['n9_v4','n9_v5','n9_v6'].forEach(k=>localStorage.removeItem(k));
 
 buildTbl();buildEntryPills();buildEntryTable();buildRangePills();
 refreshAll();
@@ -1244,7 +1255,10 @@ else{setSS('','Local');document.getElementById('setupModal').style.display='flex
 
 // Auto-save ทุก 60 วินาที (บันทึก local + sync cloud)
 setInterval(()=>{
-  const d = readInps(); d.fol = cd.fol; d.channel = readChannelInps();
+  const d = readInps();
+  d.fol = cd.fol;
+  d.channel = cd.channel;
+  d.rangeData = cd.rangeData;
   localSave(d); cd = d;
   if(hasCfg()) remoteSave(d);
 }, 60000);
