@@ -946,72 +946,20 @@ async function saveRange(){
   showToast(ok?'บันทึก Range แล้ว ✓':'บันทึก Local แล้ว');
   buildRange();
 }
-  function getActualFromInput(memberIdx, monthIdx) {
-  if (!cd.entry || !cd.entry[memberIdx] || !cd.entry[memberIdx][monthIdx]) {
-    return { v15: 0, vTotal: 0 };
-  }
-  const entry = cd.entry[memberIdx][monthIdx];
-  return {
-    v15: entry.v15 || 0,        // ยอดสะสมวันที่ 15
-    vTotal: entry.v_tt || 0     // ยอดรวมทั้งเดือน
-  };
-}
 
-function buildRange() {
-  const moName = ENTRY_MO[rangeMo];
-  document.getElementById('range-mo-label').textContent = moName;
+function buildRange(){
+  const mo = ENTRY_MO[rangeMo];
+  document.getElementById('range-mo-label').textContent = mo;
 
-  // Highlight ปุ่มเดือน
-  ENTRY_MO.forEach((_, i) => {
-    const p = document.getElementById(`rngp_${i}`); if (!p) return;
-    p.style.borderColor = i === rangeMo ? 'var(--ac)' : 'var(--bd)';
-    p.style.color = i === rangeMo ? 'var(--ac)' : 'var(--mu)';
+  // update pills highlight
+  ENTRY_MO.forEach((_,i)=>{
+    const p=document.getElementById(`rngp_${i}`);if(!p)return;
+    p.style.borderColor=i===rangeMo?'var(--ac)':'var(--bd)';
+    p.style.color=i===rangeMo?'var(--ac)':'var(--mu)';
   });
 
   const rd = getRangeData();
-  const container = document.getElementById('rangeCards');
-  container.innerHTML = '';
-
-  MB.forEach((m, i) => {
-    const target = rd[i][rangeMo]; // เป้าหมายที่ตั้งในหน้า Range
-    const actual = getActualFromInput(i, rangeMo); // ยอดจริงจากหน้า Input
-
-    // คำนวณ % ความสำเร็จ
-    const vPct15 = target.views_target > 0 ? (actual.v15 / target.views_target) * 100 : 0;
-    const vPctTotal = target.views_target > 0 ? (actual.vTotal / target.views_target) * 100 : 0;
-
-    const card = `
-      <div class="range-card" style="margin-bottom:15px; padding:15px; background:var(--sf); border-radius:12px; border:1px solid var(--bd)">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-          <strong>${m.name}</strong> 
-          <span class="tier t${m.tier}">Tier ${m.tier}</span>
-        </div>
-        
-        <div style="margin-bottom:12px">
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mu)">
-            <span>ความคืบหน้าครึ่งเดือน (1-15)</span>
-            <span style="color:${vPct15 >= 50 ? 'var(--ac2)' : 'var(--red)'}">${vPct15.toFixed(1)}%</span>
-          </div>
-          <div class="range-prog-bg" style="height:10px; background:var(--sf2); border-radius:5px; position:relative; overflow:hidden; margin-top:4px">
-            <div style="width:${Math.min(vPct15,100)}%; height:100%; background:var(--blue); border-radius:5px"></div>
-            <div style="position:absolute; left:50%; top:0; width:2px; height:100%; background:var(--ac); opacity:0.5"></div> </div>
-          <div style="font-size:11px; margin-top:2px">ทำได้จริง: ${actual.v15.toLocaleString()} / เป้า: ${(target.views_target/2).toLocaleString()}</div>
-        </div>
-
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--mu)">
-            <span>ภาพรวมทั้งเดือน</span>
-            <span style="color:var(--tx)">${vPctTotal.toFixed(1)}%</span>
-          </div>
-          <div class="range-prog-bg" style="height:10px; background:var(--sf2); border-radius:5px; margin-top:4px">
-            <div style="width:${Math.min(vPctTotal,100)}%; height:100%; background:var(--ac2); border-radius:5px"></div>
-          </div>
-          <div style="font-size:11px; margin-top:2px">รวมปัจจุบัน: ${actual.vTotal.toLocaleString()} / เป้า: ${target.views_target.toLocaleString()}</div>
-        </div>
-      </div>`;
-    container.innerHTML += card;
-  });
-}
+  const data = MB.map((m,i)=>({...m,i,...rd[i][rangeMo]}));
 
   // Summary
   const totalEngTgt = data.reduce((s,d)=>s+(d.eng_target||0),0);
